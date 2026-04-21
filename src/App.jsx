@@ -21,13 +21,35 @@ const css = `
   html { scroll-behavior: smooth; }
   body { background: var(--paper); color: var(--ink); font-family: var(--sans); min-height: 100vh; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
   .app { display: flex; flex-direction: column; min-height: 100vh; }
-  .page-wrap { flex: 1; }
+  .page-wrap { flex: 1; position: relative; }
 
-  /* ── ANIMATIONS ── */
+  /* ── PAGE STAGE ANIMATION ── */
+  .page-stage {
+    position: relative;
+    animation: pageReveal 0.65s cubic-bezier(.22,1,.36,1) both;
+    transform-origin: top center;
+  }
+  .page-stage::before {
+    content:'';
+    position:absolute;
+    inset:0 auto auto 50%;
+    width:min(72vw,920px);
+    height:220px;
+    transform:translateX(-50%);
+    background:radial-gradient(circle,rgba(91,54,242,0.09),transparent 68%);
+    pointer-events:none;
+    filter:blur(24px);
+    animation:pageGlow 4.5s ease-in-out infinite;
+    z-index:0;
+  }
+  .page-stage > * { position: relative; z-index: 1; }
+
+  /* ══════════════════════════════════════════
+     ALL ANIMATIONS
+  ══════════════════════════════════════════ */
   @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
   @keyframes slideRight { from{opacity:0;transform:translateX(-24px)} to{opacity:1;transform:translateX(0)} }
-  @keyframes scaleIn { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
   @keyframes floatCard { 0%,100%{transform:translateY(0px) rotate(0deg)} 50%{transform:translateY(-12px) rotate(0.5deg)} }
   @keyframes logoGlow { 0%,100%{box-shadow:0 0 0 0 rgba(91,54,242,0.5)} 50%{box-shadow:0 0 0 10px rgba(91,54,242,0)} }
   @keyframes breathe { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.35;transform:scale(0.8)} }
@@ -35,39 +57,133 @@ const css = `
   @keyframes modalIn { from{opacity:0;transform:scale(0.88) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
   @keyframes overlayIn { from{opacity:0} to{opacity:1} }
   @keyframes checkPop { 0%{transform:scale(0) rotate(-45deg);opacity:0} 60%{transform:scale(1.25) rotate(5deg)} 100%{transform:scale(1) rotate(0deg);opacity:1} }
-  @keyframes navSlide { from{opacity:0;transform:translateY(-100%)} to{opacity:1;transform:translateY(0)} }
   @keyframes cardEntrance { from{opacity:0;transform:translateY(40px) scale(0.95)} to{opacity:1;transform:translateY(0) scale(1)} }
-  @keyframes confetti { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(-120px) rotate(720deg);opacity:0} }
   @keyframes heartBeat { 0%,100%{transform:scale(1)} 14%{transform:scale(1.35)} 28%{transform:scale(1)} 42%{transform:scale(1.25)} 70%{transform:scale(1)} }
   @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
   @keyframes bellShake { 0%,100%{transform:rotate(0deg)} 20%{transform:rotate(-15deg)} 40%{transform:rotate(12deg)} 60%{transform:rotate(-8deg)} 80%{transform:rotate(5deg)} }
   @keyframes notifPop { from{opacity:0;transform:scale(0.7) translateY(-10px)} to{opacity:1;transform:scale(1) translateY(0)} }
   @keyframes scanLine { 0%{top:5%} 100%{top:88%} }
   @keyframes uploadPulse { 0%,100%{box-shadow:0 0 0 0 rgba(91,54,242,0.4)} 50%{box-shadow:0 0 0 20px rgba(91,54,242,0)} }
   @keyframes progressShimmer { 0%{background-position:-200px 0} 100%{background-position:200px 0} }
   @keyframes fileFloat { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-8px) rotate(1deg)} }
-  @keyframes checkDraw { from{stroke-dashoffset:50} to{stroke-dashoffset:0} }
   @keyframes orbFloat { 0%{transform:translate(0,0)} 33%{transform:translate(20px,-15px)} 66%{transform:translate(-15px,10px)} 100%{transform:translate(0,0)} }
   @keyframes glowPulse { 0%,100%{box-shadow:0 0 20px rgba(91,54,242,0.3)} 50%{box-shadow:0 0 40px rgba(91,54,242,0.6)} }
   @keyframes priceIn { from{opacity:0;transform:scale(0.8) translateY(10px)} to{opacity:1;transform:scale(1) translateY(0)} }
   @keyframes shimmerSlide { 0%{left:-100%} 100%{left:200%} }
-  @keyframes socialHover { from{transform:translateY(0) scale(1)} to{transform:translateY(-8px) scale(1.04)} }
   @keyframes dotPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:0.6} }
   @keyframes navbarIn { from{opacity:0;transform:translateY(-100%)} to{opacity:1;transform:translateY(0)} }
-  @keyframes inputGlow { 0%,100%{box-shadow:0 0 0 0 rgba(91,54,242,0.2)} 50%{box-shadow:0 0 0 6px rgba(91,54,242,0.08)} }
-  @keyframes navSearch { from{width:0;opacity:0} to{width:220px;opacity:1} }
-  @keyframes tooltipIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
   @keyframes ringPop { 0%{transform:scale(0.5);opacity:1} 100%{transform:scale(2.5);opacity:0} }
+  @keyframes pageReveal { from{opacity:0;transform:translateY(24px) scale(0.985);filter:blur(8px)} to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)} }
+  @keyframes pageGlow { 0%,100%{opacity:0.35;transform:translateX(-50%) scale(1)} 50%{opacity:0.7;transform:translateX(-50%) scale(1.08)} }
+  @keyframes premiumSweep { 0%{transform:translateX(-130%) skewX(-18deg)} 100%{transform:translateX(260%) skewX(-18deg)} }
+  @keyframes premiumHalo { 0%,100%{opacity:0.4;transform:scale(1)} 50%{opacity:0.85;transform:scale(1.18)} }
+  @keyframes methodPulse { 0%,100%{box-shadow:0 0 0 0 rgba(91,54,242,0.12)} 50%{box-shadow:0 0 0 8px rgba(91,54,242,0)} }
+  @keyframes successOrb { 0%{transform:translateY(0) scale(1)} 50%{transform:translateY(-10px) scale(1.04)} 100%{transform:translateY(0) scale(1)} }
 
-  .fade-in { animation: fadeUp 0.5s cubic-bezier(.22,1,.36,1) both; }
+  /* ── NEW FEATURED CARD ANIMATIONS ── */
+  @keyframes cardFlip3D {
+    0%   { opacity:0; transform:perspective(700px) rotateY(-22deg) translateY(32px) scale(0.93); }
+    60%  { transform:perspective(700px) rotateY(4deg) translateY(-4px) scale(1.01); }
+    100% { opacity:1; transform:perspective(700px) rotateY(0deg) translateY(0) scale(1); }
+  }
+  @keyframes featuredGlow {
+    0%,100% { box-shadow:0 12px 40px rgba(91,54,242,0.10); }
+    50%     { box-shadow:0 20px 64px rgba(91,54,242,0.30), 0 0 0 1px rgba(91,54,242,0.18); }
+  }
+  @keyframes tagSlideIn {
+    0%   { opacity:0; transform:translateX(-14px) scale(0.8); }
+    70%  { transform:translateX(3px) scale(1.05); }
+    100% { opacity:1; transform:translateX(0) scale(1); }
+  }
+  @keyframes salaryReveal {
+    0%   { opacity:0; transform:translateY(10px) scale(0.85); }
+    100% { opacity:1; transform:translateY(0) scale(1); }
+  }
+  @keyframes topBarDraw {
+    from { transform:scaleX(0); transform-origin:left; }
+    to   { transform:scaleX(1); transform-origin:left; }
+  }
+  @keyframes kicherPulse {
+    0%,100% { box-shadow:0 0 0 0 rgba(91,54,242,0.35); }
+    50%     { box-shadow:0 0 0 6px rgba(91,54,242,0); }
+  }
+  @keyframes logoPopIn {
+    0%   { opacity:0; transform:scale(0.5) rotate(-15deg); }
+    65%  { transform:scale(1.12) rotate(4deg); }
+    100% { opacity:1; transform:scale(1) rotate(0deg); }
+  }
+
+  /* ── PAGE TRANSITION ANIMATIONS ── */
+  @keyframes pageSlideUp {
+    from { opacity:0; transform:translateY(40px) scale(0.97); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+  @keyframes pageSlideLeft {
+    from { opacity:0; transform:translateX(50px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+  @keyframes sectionFadeUp {
+    from { opacity:0; transform:translateY(30px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* ── PAYMENT CONFIRMATION ANIMATIONS ── */
+  @keyframes confirmRingExpand {
+    0%   { transform:scale(0.3); opacity:0; }
+    50%  { transform:scale(1.18); opacity:1; }
+    100% { transform:scale(1); opacity:1; }
+  }
+  @keyframes confirmCheckDraw {
+    from { stroke-dashoffset:80; }
+    to   { stroke-dashoffset:0; }
+  }
+  @keyframes confirmParticle {
+    0%   { opacity:1; transform:translate(0,0) scale(1); }
+    100% { opacity:0; transform:translate(var(--px),var(--py)) scale(0.2) rotate(var(--pr)); }
+  }
+  @keyframes confirmStagger {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+  @keyframes confettiBurst {
+    0%   { opacity:1; transform:translateY(0) rotate(0deg) scale(1); }
+    100% { opacity:0; transform:translateY(var(--cy)) translateX(var(--cx)) rotate(var(--cr)) scale(0.3); }
+  }
+  @keyframes methodSlideIn {
+    from { opacity:0; transform:translateY(16px) scale(0.92); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+  @keyframes bankCardSlide {
+    from { opacity:0; transform:translateX(-22px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+  @keyframes upiPopIn {
+    0%   { opacity:0; transform:scale(0.4) rotate(-25deg); }
+    60%  { transform:scale(1.18) rotate(5deg); }
+    100% { opacity:1; transform:scale(1) rotate(0); }
+  }
+  @keyframes planConfirmIn {
+    from { opacity:0; transform:scale(0.82) translateY(28px); }
+    to   { opacity:1; transform:scale(1) translateY(0); }
+  }
+  @keyframes statCardPop {
+    0%   { opacity:0; transform:scale(0.7) translateY(10px); }
+    65%  { transform:scale(1.06); }
+    100% { opacity:1; transform:scale(1) translateY(0); }
+  }
+  @keyframes successPulseRing {
+    0%   { transform:scale(1); opacity:0.7; }
+    100% { transform:scale(2.2); opacity:0; }
+  }
+
+  .fade-in   { animation: fadeUp 0.5s cubic-bezier(.22,1,.36,1) both; }
   .fade-in-1 { animation: fadeUp 0.5s 0.06s cubic-bezier(.22,1,.36,1) both; }
   .fade-in-2 { animation: fadeUp 0.5s 0.12s cubic-bezier(.22,1,.36,1) both; }
   .fade-in-3 { animation: fadeUp 0.5s 0.18s cubic-bezier(.22,1,.36,1) both; }
   .fade-in-4 { animation: fadeUp 0.5s 0.24s cubic-bezier(.22,1,.36,1) both; }
 
   /* ══════════════════════════════════════════
-     PREMIUM NAVBAR — FULLY UPGRADED
+     PREMIUM NAVBAR
   ══════════════════════════════════════════ */
   .nav {
     position: sticky; top: 0; z-index: 300; height: 68px;
@@ -80,153 +196,58 @@ const css = `
     animation: navbarIn 0.6s cubic-bezier(.22,1,.36,1) both;
     transition: background 0.4s, box-shadow 0.4s;
   }
-  .nav.scrolled {
-    background: rgba(2,1,8,0.97);
-    box-shadow: 0 1px 0 rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.5);
-  }
-  .nav-logo {
-    display: flex; align-items: center; gap: 10px;
-    cursor: pointer; user-select: none; flex-shrink: 0;
-  }
-  .logo-mark {
-    width: 36px; height: 36px; border-radius: 11px;
-    background: linear-gradient(135deg, var(--violet) 0%, #8f5cf7 50%, var(--teal) 100%);
-    animation: logoGlow 3s ease-in-out infinite;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; position: relative; overflow: hidden;
-    transition: transform 0.3s cubic-bezier(.34,1.56,.64,1);
-  }
-  .logo-mark:hover { transform: scale(1.1) rotate(8deg); }
+  .nav.scrolled { background:rgba(2,1,8,0.97); box-shadow:0 1px 0 rgba(255,255,255,0.05),0 8px 32px rgba(0,0,0,0.5); }
+  .nav-logo { display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; flex-shrink:0; }
+  .logo-mark { width:36px; height:36px; border-radius:11px; background:linear-gradient(135deg,var(--violet) 0%,#8f5cf7 50%,var(--teal) 100%); animation:logoGlow 3s ease-in-out infinite; display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative; overflow:hidden; transition:transform 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .logo-mark:hover { transform:scale(1.1) rotate(8deg); }
   .logo-mark::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent); border-radius:inherit; }
-  .logo-mark svg { width: 18px; height: 18px; position: relative; z-index: 1; }
-  .logo-name { font-family: var(--display); font-weight: 800; font-size: 1.1rem; color: #fff; letter-spacing: -0.03em; }
-  .logo-name em { color: var(--violet-light); font-style: normal; }
-
-  /* Nav search bar */
-  .nav-search-wrap { flex: 1; max-width: 260px; position: relative; }
-  .nav-search-inner {
-    display: flex; align-items: center; gap: 0;
-    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 100px; overflow: hidden; width: 100%;
-    transition: all 0.3s;
-  }
-  .nav-search-inner:focus-within {
-    border-color: rgba(91,54,242,0.6);
-    background: rgba(255,255,255,0.09);
-    box-shadow: 0 0 0 3px rgba(91,54,242,0.15);
-  }
-  .nav-search-icon { padding: 0 10px; color: rgba(255,255,255,0.3); font-size: 12px; flex-shrink: 0; }
-  .nav-search-input {
-    background: none; border: none; outline: none; color: #fff;
-    font-family: var(--sans); font-size: 0.8rem; padding: 0.5rem 0.5rem 0.5rem 0; width: 100%;
-  }
-  .nav-search-input::placeholder { color: rgba(255,255,255,0.22); }
-  .nav-search-kbd {
-    flex-shrink: 0; margin-right: 8px; font-size: 0.65rem; padding: 2px 6px;
-    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-    border-radius: 4px; color: rgba(255,255,255,0.3); font-family: var(--display);
-  }
-
-  .nav-center { display: flex; gap: 2px; }
-  .nav-item {
-    background: none; border: none; cursor: pointer;
-    color: rgba(255,255,255,0.42); font-family: var(--sans);
-    font-size: 0.83rem; font-weight: 500; letter-spacing: 0.01em;
-    padding: 0.42rem 1rem; border-radius: 9px;
-    transition: color 0.25s, background 0.25s; position: relative; overflow: hidden;
-  }
-  .nav-item::before {
-    content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-    width: 0; height: 2px; border-radius: 2px;
-    background: linear-gradient(90deg, var(--violet), var(--violet-light));
-    transition: width 0.3s cubic-bezier(.22,1,.36,1);
-  }
-  .nav-item:hover { color: rgba(255,255,255,0.9); background: rgba(255,255,255,0.06); }
-  .nav-item:hover::before { width: 60%; }
-  .nav-item.active { color: #fff; }
-  .nav-item.active::before { width: 60%; background: linear-gradient(90deg, var(--violet), var(--teal)); }
-
-  /* Nav right cluster */
-  .nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-
-  /* Notification bell */
-  .nav-bell {
-    position: relative; width: 34px; height: 34px; border-radius: 9px; flex-shrink: 0;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.09);
-    display: flex; align-items: center; justify-content: center; cursor: pointer;
-    color: rgba(255,255,255,0.4); font-size: 15px;
-    transition: all 0.3s cubic-bezier(.34,1.56,.64,1);
-  }
-  .nav-bell:hover { background: rgba(91,54,242,0.2); border-color: rgba(91,54,242,0.45); color: #fff; transform: scale(1.05); animation: bellShake 0.5s ease; }
-  .bell-badge {
-    position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%;
-    background: var(--rose); border: 1.5px solid rgba(4,2,12,0.92);
-    animation: dotPulse 2s ease-in-out infinite;
-  }
-  .bell-ring {
-    position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%;
-    border: 1px solid var(--rose); animation: ringPop 2s ease-in-out infinite;
-  }
-
-  /* Notif dropdown */
-  .notif-dropdown {
-    position: absolute; top: calc(100% + 12px); right: 0; width: 320px;
-    background: #12101e; border: 1px solid rgba(255,255,255,0.1);
-    border-radius: var(--r-lg); overflow: hidden;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.45);
-    animation: notifPop 0.3s cubic-bezier(.34,1.56,.64,1) both; z-index: 99;
-  }
-  .notif-header { padding: 1rem 1.25rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; justify-content: space-between; align-items: center; }
-  .notif-title { font-family: var(--display); font-size: 0.88rem; font-weight: 700; color: #fff; }
-  .notif-clear { font-size: 0.72rem; color: var(--violet-light); cursor: pointer; background: none; border: none; font-family: var(--sans); }
-  .notif-item { display: flex; gap: 0.75rem; padding: 0.85rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.2s; }
-  .notif-item:hover { background: rgba(255,255,255,0.04); }
-  .notif-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-  .notif-text { font-size: 0.78rem; color: rgba(255,255,255,0.65); line-height: 1.5; flex: 1; }
-  .notif-time { font-size: 0.68rem; color: rgba(255,255,255,0.25); margin-top: 2px; display: block; }
-  .notif-footer { padding: 0.75rem 1.25rem; text-align: center; }
-  .notif-footer-btn { font-size: 0.78rem; color: var(--violet-light); cursor: pointer; background: none; border: none; font-family: var(--sans); }
-
-  .saved-pill {
-    display: flex; align-items: center; gap: 7px;
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 100px; padding: 5px 12px 5px 7px;
-    cursor: pointer; transition: all 0.3s cubic-bezier(.22,1,.36,1);
-    font-size: 0.78rem; color: rgba(255,255,255,0.5); font-family: var(--sans);
-  }
-  .saved-pill:hover { background: rgba(91,54,242,0.18); border-color: rgba(91,54,242,0.4); color: #fff; transform: scale(1.03); }
-  .saved-count {
-    min-width: 19px; height: 19px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--violet), var(--violet-light));
-    color: #fff; font-size: 0.66rem; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    animation: heartBeat 2s ease-in-out infinite;
-  }
-  .nav-plans-btn {
-    background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3);
-    color: var(--gold); font-family: var(--sans); font-size: 0.78rem; font-weight: 700;
-    padding: 0.42rem 0.85rem; border-radius: 100px; cursor: pointer;
-    transition: all 0.3s cubic-bezier(.34,1.56,.64,1); letter-spacing: 0.02em;
-  }
-  .nav-plans-btn:hover { background: rgba(245,158,11,0.22); border-color: var(--gold); transform: scale(1.04); box-shadow: 0 4px 20px rgba(245,158,11,0.25); }
-  .nav-cta {
-    background: linear-gradient(135deg, var(--violet) 0%, var(--violet-light) 100%);
-    color: #fff; border: none; padding: 0.48rem 1.2rem;
-    font-family: var(--sans); font-size: 0.8rem; font-weight: 700;
-    border-radius: 100px; cursor: pointer;
-    box-shadow: 0 4px 20px rgba(91,54,242,0.4);
-    transition: all 0.3s cubic-bezier(.34,1.56,.64,1); letter-spacing: 0.01em;
-    position: relative; overflow: hidden;
-  }
+  .logo-mark svg { width:18px; height:18px; position:relative; z-index:1; }
+  .logo-name { font-family:var(--display); font-weight:800; font-size:1.1rem; color:#fff; letter-spacing:-0.03em; }
+  .logo-name em { color:var(--violet-light); font-style:normal; }
+  .nav-search-wrap { flex:1; max-width:260px; position:relative; }
+  .nav-search-inner { display:flex; align-items:center; gap:0; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:100px; overflow:hidden; width:100%; transition:all 0.3s; }
+  .nav-search-inner:focus-within { border-color:rgba(91,54,242,0.6); background:rgba(255,255,255,0.09); box-shadow:0 0 0 3px rgba(91,54,242,0.15); }
+  .nav-search-icon { padding:0 10px; color:rgba(255,255,255,0.3); font-size:12px; flex-shrink:0; }
+  .nav-search-input { background:none; border:none; outline:none; color:#fff; font-family:var(--sans); font-size:0.8rem; padding:0.5rem 0.5rem 0.5rem 0; width:100%; }
+  .nav-search-input::placeholder { color:rgba(255,255,255,0.22); }
+  .nav-search-kbd { flex-shrink:0; margin-right:8px; font-size:0.65rem; padding:2px 6px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12); border-radius:4px; color:rgba(255,255,255,0.3); font-family:var(--display); }
+  .nav-center { display:flex; gap:2px; }
+  .nav-item { background:none; border:none; cursor:pointer; color:rgba(255,255,255,0.42); font-family:var(--sans); font-size:0.83rem; font-weight:500; letter-spacing:0.01em; padding:0.42rem 1rem; border-radius:9px; transition:color 0.25s,background 0.25s; position:relative; overflow:hidden; }
+  .nav-item::before { content:''; position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:0; height:2px; border-radius:2px; background:linear-gradient(90deg,var(--violet),var(--violet-light)); transition:width 0.3s cubic-bezier(.22,1,.36,1); }
+  .nav-item:hover { color:rgba(255,255,255,0.9); background:rgba(255,255,255,0.06); }
+  .nav-item:hover::before { width:60%; }
+  .nav-item.active { color:#fff; }
+  .nav-item.active::before { width:60%; background:linear-gradient(90deg,var(--violet),var(--teal)); }
+  .nav-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .nav-bell { position:relative; width:34px; height:34px; border-radius:9px; flex-shrink:0; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgba(255,255,255,0.4); font-size:15px; transition:all 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .nav-bell:hover { background:rgba(91,54,242,0.2); border-color:rgba(91,54,242,0.45); color:#fff; transform:scale(1.05); animation:bellShake 0.5s ease; }
+  .bell-badge { position:absolute; top:5px; right:5px; width:8px; height:8px; border-radius:50%; background:var(--rose); border:1.5px solid rgba(4,2,12,0.92); animation:dotPulse 2s ease-in-out infinite; }
+  .bell-ring { position:absolute; top:5px; right:5px; width:8px; height:8px; border-radius:50%; border:1px solid var(--rose); animation:ringPop 2s ease-in-out infinite; }
+  .notif-dropdown { position:absolute; top:calc(100% + 12px); right:0; width:320px; background:#12101e; border:1px solid rgba(255,255,255,0.1); border-radius:var(--r-lg); overflow:hidden; box-shadow:0 24px 64px rgba(0,0,0,0.45); animation:notifPop 0.3s cubic-bezier(.34,1.56,.64,1) both; z-index:99; }
+  .notif-header { padding:1rem 1.25rem 0.75rem; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; justify-content:space-between; align-items:center; }
+  .notif-title { font-family:var(--display); font-size:0.88rem; font-weight:700; color:#fff; }
+  .notif-clear { font-size:0.72rem; color:var(--violet-light); cursor:pointer; background:none; border:none; font-family:var(--sans); }
+  .notif-item { display:flex; gap:0.75rem; padding:0.85rem 1.25rem; border-bottom:1px solid rgba(255,255,255,0.04); cursor:pointer; transition:background 0.2s; }
+  .notif-item:hover { background:rgba(255,255,255,0.04); }
+  .notif-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+  .notif-text { font-size:0.78rem; color:rgba(255,255,255,0.65); line-height:1.5; flex:1; }
+  .notif-time { font-size:0.68rem; color:rgba(255,255,255,0.25); margin-top:2px; display:block; }
+  .notif-footer { padding:0.75rem 1.25rem; text-align:center; }
+  .notif-footer-btn { font-size:0.78rem; color:var(--violet-light); cursor:pointer; background:none; border:none; font-family:var(--sans); }
+  .saved-pill { display:flex; align-items:center; gap:7px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); border-radius:100px; padding:5px 12px 5px 7px; cursor:pointer; transition:all 0.3s cubic-bezier(.22,1,.36,1); font-size:0.78rem; color:rgba(255,255,255,0.5); font-family:var(--sans); }
+  .saved-pill:hover { background:rgba(91,54,242,0.18); border-color:rgba(91,54,242,0.4); color:#fff; transform:scale(1.03); }
+  .saved-count { min-width:19px; height:19px; border-radius:10px; background:linear-gradient(135deg,var(--violet),var(--violet-light)); color:#fff; font-size:0.66rem; font-weight:700; display:flex; align-items:center; justify-content:center; animation:heartBeat 2s ease-in-out infinite; }
+  .nav-plans-btn { background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3); color:var(--gold); font-family:var(--sans); font-size:0.78rem; font-weight:700; padding:0.42rem 0.85rem; border-radius:100px; cursor:pointer; transition:all 0.3s cubic-bezier(.34,1.56,.64,1); letter-spacing:0.02em; }
+  .nav-plans-btn:hover { background:rgba(245,158,11,0.22); border-color:var(--gold); transform:scale(1.04); box-shadow:0 4px 20px rgba(245,158,11,0.25); }
+  .nav-cta { background:linear-gradient(135deg,var(--violet) 0%,var(--violet-light) 100%); color:#fff; border:none; padding:0.48rem 1.2rem; font-family:var(--sans); font-size:0.8rem; font-weight:700; border-radius:100px; cursor:pointer; box-shadow:0 4px 20px rgba(91,54,242,0.4); transition:all 0.3s cubic-bezier(.34,1.56,.64,1); letter-spacing:0.01em; position:relative; overflow:hidden; }
   .nav-cta::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.2),transparent); opacity:0; transition:opacity 0.25s; }
-  .nav-cta:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 8px 32px rgba(91,54,242,0.55); }
-  .nav-cta:hover::before { opacity: 1; }
-  .nav-cta:active { transform: scale(0.98); }
+  .nav-cta:hover { transform:translateY(-2px) scale(1.04); box-shadow:0 8px 32px rgba(91,54,242,0.55); }
+  .nav-cta:hover::before { opacity:1; }
 
   /* ── HERO ── */
   .hero { position:relative; overflow:hidden; background:#06040f; padding:6.5rem 2.5rem 5.5rem; min-height:78vh; display:flex; align-items:center; }
-  .hero-mesh { position:absolute; inset:0; pointer-events:none; background: radial-gradient(ellipse 80% 80% at 60% -20%, rgba(91,54,242,0.28) 0%, transparent 55%), radial-gradient(ellipse 60% 70% at 2% 95%, rgba(0,201,167,0.12) 0%, transparent 50%), radial-gradient(ellipse 45% 45% at 98% 55%, rgba(242,75,110,0.09) 0%, transparent 50%); }
-  .hero-grid { position:absolute; inset:0; pointer-events:none; background-image: linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px); background-size:60px 60px; mask-image:radial-gradient(ellipse at center, black 30%, transparent 80%); }
+  .hero-mesh { position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 80% 80% at 60% -20%,rgba(91,54,242,0.28) 0%,transparent 55%),radial-gradient(ellipse 60% 70% at 2% 95%,rgba(0,201,167,0.12) 0%,transparent 50%),radial-gradient(ellipse 45% 45% at 98% 55%,rgba(242,75,110,0.09) 0%,transparent 50%); }
+  .hero-grid { position:absolute; inset:0; pointer-events:none; background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px); background-size:60px 60px; mask-image:radial-gradient(ellipse at center,black 30%,transparent 80%); }
   .hero-inner { max-width:860px; margin:0 auto; position:relative; width:100%; }
   .hero-eyebrow { display:inline-flex; align-items:center; gap:9px; background:rgba(91,54,242,0.15); border:1px solid rgba(91,54,242,0.3); border-radius:100px; padding:7px 16px 7px 9px; margin-bottom:2rem; animation:fadeUp 0.7s 0.1s cubic-bezier(.22,1,.36,1) both; backdrop-filter:blur(8px); }
   .hero-eyebrow-dot { width:9px; height:9px; border-radius:50%; background:var(--teal); flex-shrink:0; box-shadow:0 0 12px var(--teal); animation:breathe 2.5s ease-in-out infinite; }
@@ -235,8 +256,8 @@ const css = `
   .hero h1 .gradient { background:linear-gradient(100deg,var(--violet-light) 0%,var(--teal) 60%,#a8ff78 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   .hero-sub { font-size:1.05rem; color:rgba(255,255,255,0.42); max-width:480px; line-height:1.8; margin-bottom:2.8rem; animation:fadeUp 0.7s 0.3s cubic-bezier(.22,1,.36,1) both; font-weight:300; }
   .search-container { animation:fadeUp 0.7s 0.4s cubic-bezier(.22,1,.36,1) both; }
-  .search-glass { display:flex; align-items:center; background:rgba(255,255,255,0.055); border:1px solid rgba(255,255,255,0.11); border-radius:var(--r-xl); padding:6px; max-width:660px; backdrop-filter:blur(20px); transition:border-color 0.3s, box-shadow 0.3s; }
-  .search-glass:focus-within { border-color:rgba(91,54,242,0.55); box-shadow:0 0 0 4px rgba(91,54,242,0.12), 0 8px 32px rgba(91,54,242,0.15); }
+  .search-glass { display:flex; align-items:center; background:rgba(255,255,255,0.055); border:1px solid rgba(255,255,255,0.11); border-radius:var(--r-xl); padding:6px; max-width:660px; backdrop-filter:blur(20px); transition:border-color 0.3s,box-shadow 0.3s; }
+  .search-glass:focus-within { border-color:rgba(91,54,242,0.55); box-shadow:0 0 0 4px rgba(91,54,242,0.12),0 8px 32px rgba(91,54,242,0.15); }
   .search-icon { padding:0 0.9rem; font-size:1rem; opacity:0.35; flex-shrink:0; }
   .search-glass input { flex:1; background:none; border:none; outline:none; color:#fff; font-family:var(--sans); font-size:0.92rem; padding:0.7rem 0; }
   .search-glass input::placeholder { color:rgba(255,255,255,0.22); }
@@ -281,27 +302,85 @@ const css = `
   .cat-label { font-size:0.79rem; font-weight:700; color:var(--ink); letter-spacing:-0.01em; font-family:var(--display); }
   .cat-count { font-size:0.71rem; color:var(--muted); margin-top:0.18rem; }
 
-  /* ── JOB CARDS ── */
+  /* ════════════════════════════════════════
+     ENHANCED FEATURED JOB CARDS
+  ════════════════════════════════════════ */
   .jobs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:1.1rem; }
-  .job-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:1.65rem; cursor:pointer; position:relative; overflow:hidden; transition:all 0.35s cubic-bezier(.22,1,.36,1); animation:cardEntrance 0.6s cubic-bezier(.22,1,.36,1) both; }
-  .job-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--violet),var(--teal)); transform:scaleX(0); transform-origin:left; transition:transform 0.4s cubic-bezier(.22,1,.36,1); }
-  .job-card:hover { border-color:var(--border2); transform:translateY(-7px); box-shadow:0 24px 56px rgba(91,54,242,0.13); }
+
+  .job-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--r-lg); padding:1.65rem;
+    cursor:pointer; position:relative; overflow:hidden;
+    transition:all 0.42s cubic-bezier(.22,1,.36,1);
+    animation:cardFlip3D 0.75s cubic-bezier(.22,1,.36,1) both;
+  }
+  /* Top colour bar — draws in on hover */
+  .job-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    background:linear-gradient(90deg,var(--violet),var(--teal));
+    transform:scaleX(0); transform-origin:left;
+    transition:transform 0.55s cubic-bezier(.22,1,.36,1);
+  }
+  .job-card:hover { border-color:var(--border2); transform:translateY(-10px) scale(1.016); box-shadow:0 28px 60px rgba(91,54,242,0.15); }
   .job-card:hover::before { transform:scaleX(1); }
+
+  /* ── PREMIUM FEATURED CARD ── */
+  .job-card.premium-card {
+    background:radial-gradient(circle at top right,rgba(91,54,242,0.14),transparent 40%),linear-gradient(180deg,#ffffff 0%,#faf9ff 100%);
+    border-color:rgba(91,54,242,0.22);
+    animation:cardFlip3D 0.75s cubic-bezier(.22,1,.36,1) both, featuredGlow 4.5s 1s ease-in-out infinite;
+  }
+  /* Shimmer sweep on hover */
+  .job-card.premium-card::after {
+    content:''; position:absolute; top:-40%; left:-20%; width:45%; height:190%;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.88),transparent);
+    opacity:0; pointer-events:none;
+  }
+  .job-card.premium-card:hover { transform:translateY(-13px) scale(1.022); box-shadow:0 36px 80px rgba(91,54,242,0.22); }
+  .job-card.premium-card:hover::after { opacity:1; animation:premiumSweep 1.1s ease; }
+
+  .premium-orb { position:absolute; border-radius:50%; pointer-events:none; filter:blur(2px); opacity:0.9; }
+  .premium-orb.one { width:82px; height:82px; top:-22px; right:-18px; background:radial-gradient(circle,rgba(91,54,242,0.2),transparent 70%); animation:premiumHalo 3.8s ease-in-out infinite; }
+  .premium-orb.two { width:70px; height:70px; bottom:-18px; left:-12px; background:radial-gradient(circle,rgba(0,201,167,0.16),transparent 72%); animation:premiumHalo 4.6s ease-in-out infinite reverse; }
+
+  /* Animated kicker badge */
+  .premium-kicker {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:5px 12px; border-radius:100px;
+    background:rgba(91,54,242,0.09); border:1px solid rgba(91,54,242,0.2);
+    font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--violet); margin-bottom:0.9rem;
+    animation:kicherPulse 2.5s ease-in-out infinite;
+  }
+  .premium-kicker-dot { width:7px; height:7px; border-radius:50%; background:var(--teal); animation:breathe 1.8s ease-in-out infinite; }
+
   .jc-top { display:flex; justify-content:space-between; margin-bottom:1rem; }
   .jc-logo-wrap { display:flex; align-items:flex-start; gap:0.9rem; }
+
+  /* Logo pops in */
+  .jc-logo-anim { animation:logoPopIn 0.6s 0.15s cubic-bezier(.34,1.56,.64,1) both; }
+
   .job-title-text { font-family:var(--display); font-size:1rem; font-weight:700; margin-bottom:0.22rem; letter-spacing:-0.01em; }
   .job-co { font-size:0.79rem; color:var(--muted); font-weight:400; }
   .bk-btn { width:33px; height:33px; border-radius:9px; flex-shrink:0; background:none; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:15px; color:var(--muted2); transition:all 0.3s cubic-bezier(.34,1.56,.64,1); }
   .bk-btn:hover, .bk-btn.saved { background:var(--violet-pale); border-color:var(--border2); color:var(--violet); transform:scale(1.1); }
   .bk-btn.saved { animation:heartBeat 0.8s ease; }
+
+  /* Tags slide in sequentially */
   .job-tags { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:1.1rem; }
-  .tag { font-size:0.69rem; font-weight:600; padding:0.26rem 0.68rem; border-radius:100px; letter-spacing:0.03em; }
+  .tag { font-size:0.69rem; font-weight:600; padding:0.26rem 0.68rem; border-radius:100px; letter-spacing:0.03em; animation:tagSlideIn 0.5s cubic-bezier(.34,1.56,.64,1) both; }
+  .tag:nth-child(1){animation-delay:0.18s}
+  .tag:nth-child(2){animation-delay:0.26s}
+  .tag:nth-child(3){animation-delay:0.34s}
+  .tag:nth-child(4){animation-delay:0.42s}
   .t-full { background:var(--teal-pale); color:#006e5a; }
   .t-remote { background:var(--violet-pale); color:#4527a0; }
   .t-level { background:var(--cream); color:#5a5870; }
   .t-featured { background:linear-gradient(135deg,var(--violet),#8f5cf7); color:#fff; }
+
   .jc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:0.9rem; border-top:1px solid var(--border); }
-  .j-salary { font-family:var(--display); font-weight:700; font-size:0.96rem; }
+  /* Salary reveals upward */
+  .j-salary { font-family:var(--display); font-weight:700; font-size:0.96rem; animation:salaryReveal 0.6s 0.45s cubic-bezier(.22,1,.36,1) both; }
   .j-date { font-size:0.72rem; color:var(--muted); }
 
   /* ── COMPANY CARDS ── */
@@ -376,57 +455,29 @@ const css = `
   .sc-deadline { font-size:0.73rem; color:var(--muted); text-align:center; margin-top:0.8rem; }
   .sc-meta { font-size:0.77rem; color:var(--muted); line-height:2.1; margin-top:1rem; padding-top:1rem; border-top:1px solid var(--border); }
 
-  /* ═══════════════════════════════════════
-     UNIQUE PREMIUM RESUME UPLOAD
-  ═══════════════════════════════════════ */
-  .resume-wrap { max-width:700px; margin:0 auto; padding:3.5rem 2.5rem; }
+  /* ── RESUME ── */
+  .resume-wrap { max-width:700px; margin:0 auto; padding:3.5rem 2.5rem; animation:pageSlideUp 0.6s cubic-bezier(.22,1,.36,1) both; }
   .pg-h2 { font-family:var(--serif); font-size:2.4rem; font-weight:400; letter-spacing:-0.02em; margin-bottom:0.45rem; }
   .pg-sub { color:var(--muted); font-size:0.88rem; margin-bottom:2.5rem; line-height:1.65; font-weight:300; }
-
-  /* Upload zone — new immersive design */
-  .upload-stage {
-    position: relative; border-radius: var(--r-xl); overflow: hidden;
-    margin-bottom: 1.5rem; background: #06040f;
-    border: 1px solid rgba(91,54,242,0.25);
-    cursor: pointer; transition: all 0.4s cubic-bezier(.22,1,.36,1);
-    min-height: 280px; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-  }
-  .upload-stage:hover { border-color: rgba(91,54,242,0.6); box-shadow: 0 0 0 4px rgba(91,54,242,0.1), 0 16px 48px rgba(91,54,242,0.2); }
-  .upload-stage.drag { border-color: var(--teal); box-shadow: 0 0 0 4px rgba(0,201,167,0.15), 0 16px 48px rgba(0,201,167,0.2); animation: uploadPulse 1s ease-in-out infinite; }
-  .upload-bg-mesh { position:absolute; inset:0; background: radial-gradient(ellipse 70% 70% at 50% 30%, rgba(91,54,242,0.18) 0%, transparent 65%), radial-gradient(ellipse 40% 50% at 20% 80%, rgba(0,201,167,0.08) 0%, transparent 55%); pointer-events:none; }
+  .upload-stage { position:relative; border-radius:var(--r-xl); overflow:hidden; margin-bottom:1.5rem; background:#06040f; border:1px solid rgba(91,54,242,0.25); cursor:pointer; transition:all 0.4s cubic-bezier(.22,1,.36,1); min-height:280px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .upload-stage:hover { border-color:rgba(91,54,242,0.6); box-shadow:0 0 0 4px rgba(91,54,242,0.1),0 16px 48px rgba(91,54,242,0.2); }
+  .upload-stage.drag { border-color:var(--teal); box-shadow:0 0 0 4px rgba(0,201,167,0.15),0 16px 48px rgba(0,201,167,0.2); animation:uploadPulse 1s ease-in-out infinite; }
+  .upload-bg-mesh { position:absolute; inset:0; background:radial-gradient(ellipse 70% 70% at 50% 30%,rgba(91,54,242,0.18) 0%,transparent 65%),radial-gradient(ellipse 40% 50% at 20% 80%,rgba(0,201,167,0.08) 0%,transparent 55%); pointer-events:none; }
   .upload-orb { position:absolute; border-radius:50%; pointer-events:none; }
   .upload-orb-1 { width:120px; height:120px; background:rgba(91,54,242,0.12); top:-20px; right:-20px; animation:orbFloat 8s ease-in-out infinite; }
   .upload-orb-2 { width:80px; height:80px; background:rgba(0,201,167,0.08); bottom:-10px; left:-10px; animation:orbFloat 6s ease-in-out infinite reverse; }
-  .upload-grid-lines { position:absolute; inset:0; pointer-events:none; background-image: linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px); background-size:40px 40px; }
-
+  .upload-grid-lines { position:absolute; inset:0; pointer-events:none; background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px); background-size:40px 40px; }
   .upload-content { position:relative; z-index:2; text-align:center; padding:3rem 2rem; }
   .upload-icon-wrap { position:relative; display:inline-block; margin-bottom:1.5rem; }
-  .upload-icon-ring {
-    width:88px; height:88px; border-radius:50%;
-    border: 2px dashed rgba(91,54,242,0.4);
-    display:flex; align-items:center; justify-content:center;
-    background: rgba(91,54,242,0.08);
-    transition: all 0.4s cubic-bezier(.34,1.56,.64,1);
-    animation: glowPulse 3s ease-in-out infinite;
-  }
-  .upload-stage:hover .upload-icon-ring { border-color: rgba(91,54,242,0.8); background: rgba(91,54,242,0.15); transform: scale(1.1); }
-  .upload-stage.drag .upload-icon-ring { border-color: var(--teal); background: rgba(0,201,167,0.12); }
-  .upload-icon-inner { font-size: 2.2rem; filter: drop-shadow(0 2px 12px rgba(91,54,242,0.5)); transition: transform 0.3s cubic-bezier(.34,1.56,.64,1); }
-  .upload-stage:hover .upload-icon-inner { transform: translateY(-4px) scale(1.1); }
-  .upload-scan-line {
-    position:absolute; left:0; right:0; height:1px; pointer-events:none;
-    background: linear-gradient(90deg, transparent, var(--violet-light), transparent);
-    box-shadow: 0 0 8px var(--violet);
-    animation: scanLine 2.5s ease-in-out infinite; opacity: 0.6;
-  }
-
+  .upload-icon-ring { width:88px; height:88px; border-radius:50%; border:2px dashed rgba(91,54,242,0.4); display:flex; align-items:center; justify-content:center; background:rgba(91,54,242,0.08); transition:all 0.4s cubic-bezier(.34,1.56,.64,1); animation:glowPulse 3s ease-in-out infinite; }
+  .upload-stage:hover .upload-icon-ring { border-color:rgba(91,54,242,0.8); background:rgba(91,54,242,0.15); transform:scale(1.1); }
+  .upload-icon-inner { font-size:2.2rem; transition:transform 0.3s cubic-bezier(.34,1.56,.64,1); }
+  .upload-stage:hover .upload-icon-inner { transform:translateY(-4px) scale(1.1); }
+  .upload-scan-line { position:absolute; left:0; right:0; height:1px; pointer-events:none; background:linear-gradient(90deg,transparent,var(--violet-light),transparent); box-shadow:0 0 8px var(--violet); animation:scanLine 2.5s ease-in-out infinite; opacity:0.6; }
   .upload-title { font-family:var(--serif); font-size:1.35rem; color:#fff; margin-bottom:0.5rem; }
   .upload-hint { font-size:0.82rem; color:rgba(255,255,255,0.35); margin-bottom:1.2rem; }
   .upload-formats { display:flex; gap:0.5rem; justify-content:center; flex-wrap:wrap; }
   .upload-fmt-badge { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); border-radius:6px; padding:4px 10px; font-size:0.68rem; font-weight:700; color:rgba(255,255,255,0.4); letter-spacing:0.05em; }
-
-  /* Progress state — premium animated */
   .upload-progress-stage { background:#06040f; border-radius:var(--r-xl); border:1px solid rgba(91,54,242,0.3); padding:2rem; margin-bottom:1.5rem; animation:fadeUp 0.5s cubic-bezier(.22,1,.36,1) both; }
   .up-file-row { display:flex; align-items:center; gap:1rem; margin-bottom:1.5rem; }
   .up-file-icon { width:52px; height:52px; border-radius:14px; background:linear-gradient(135deg,var(--violet-pale),var(--teal-pale)); display:flex; align-items:center; justify-content:center; font-size:1.5rem; flex-shrink:0; animation:fileFloat 3s ease-in-out infinite; }
@@ -434,25 +485,15 @@ const css = `
   .up-file-size { font-size:0.72rem; color:rgba(255,255,255,0.35); }
   .up-file-rm { background:none; border:none; color:rgba(255,255,255,0.25); cursor:pointer; font-size:16px; margin-left:auto; transition:color 0.2s; }
   .up-file-rm:hover { color:var(--rose); }
-
-  /* Animated progress bar */
-  .up-prog-bar { height:6px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-bottom:0.6rem; position:relative; }
-  .up-prog-fill {
-    height:100%; border-radius:4px;
-    background: linear-gradient(90deg, var(--violet), var(--violet-light), var(--teal), var(--violet));
-    background-size: 200% 100%;
-    transition: width 0.35s ease;
-    animation: progressShimmer 1.5s linear infinite;
-  }
+  .up-prog-bar { height:6px; background:rgba(255,255,255,0.08); border-radius:4px; overflow:hidden; margin-bottom:0.6rem; }
+  .up-prog-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--violet),var(--violet-light),var(--teal),var(--violet)); background-size:200% 100%; transition:width 0.35s ease; animation:progressShimmer 1.5s linear infinite; }
   .up-prog-labels { display:flex; justify-content:space-between; font-size:0.72rem; color:rgba(255,255,255,0.3); }
   .up-stages { display:flex; gap:0.5rem; margin-top:1rem; flex-wrap:wrap; }
   .up-stage-pill { display:flex; align-items:center; gap:5px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:100px; padding:4px 10px; font-size:0.7rem; color:rgba(255,255,255,0.3); transition:all 0.4s; }
   .up-stage-pill.active { background:rgba(91,54,242,0.2); border-color:rgba(91,54,242,0.4); color:var(--violet-light); }
   .up-stage-pill.done { background:rgba(0,201,167,0.1); border-color:rgba(0,201,167,0.3); color:var(--teal); }
   .up-stage-dot { width:6px; height:6px; border-radius:50%; background:currentColor; }
-  .up-stage-pill.active .up-stage-dot { animation: dotPulse 1s ease-in-out infinite; }
-
-  /* Success state */
+  .up-stage-pill.active .up-stage-dot { animation:dotPulse 1s ease-in-out infinite; }
   .upload-success { background:#06040f; border-radius:var(--r-xl); border:1px solid rgba(0,201,167,0.3); padding:2rem; text-align:center; margin-bottom:1.5rem; animation:fadeUp 0.5s cubic-bezier(.22,1,.36,1) both; }
   .up-success-icon { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,rgba(0,201,167,0.2),rgba(91,54,242,0.2)); display:flex; align-items:center; justify-content:center; margin:0 auto 1rem; font-size:2rem; animation:checkPop 0.7s 0.1s cubic-bezier(.34,1.56,.64,1) both; }
   .up-success-title { font-family:var(--serif); font-size:1.3rem; color:#fff; margin-bottom:0.4rem; }
@@ -462,21 +503,20 @@ const css = `
   .up-chip-green { background:rgba(0,201,167,0.1); border-color:rgba(0,201,167,0.25); color:var(--teal); }
   .up-change-btn { background:none; border:none; color:rgba(255,255,255,0.25); font-family:var(--sans); font-size:0.75rem; cursor:pointer; margin-top:0.75rem; transition:color 0.2s; }
   .up-change-btn:hover { color:rgba(255,255,255,0.6); }
-
   .resume-form { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:1.9rem; margin-top:1.6rem; }
   .rf-title { font-family:var(--serif); font-size:1.15rem; font-weight:400; margin-bottom:1.5rem; }
   .fgrid { display:grid; grid-template-columns:1fr 1fr; gap:0.95rem; margin-bottom:0.95rem; }
   .fg2 { display:flex; flex-direction:column; gap:0.42rem; }
   .fg2 label { font-size:0.71rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
-  .fg2 input, .fg2 select, .fg2 textarea { border:1px solid var(--border); border-radius:var(--r-sm); padding:0.65rem 0.88rem; font-family:var(--sans); font-size:0.86rem; outline:none; transition:border 0.25s, box-shadow 0.25s; background:var(--paper); color:var(--ink); }
-  .fg2 input:focus, .fg2 select:focus, .fg2 textarea:focus { border-color:var(--violet); box-shadow:0 0 0 3px rgba(91,54,242,0.1); }
+  .fg2 input,.fg2 select,.fg2 textarea { border:1px solid var(--border); border-radius:var(--r-sm); padding:0.65rem 0.88rem; font-family:var(--sans); font-size:0.86rem; outline:none; transition:border 0.25s,box-shadow 0.25s; background:var(--paper); color:var(--ink); }
+  .fg2 input:focus,.fg2 select:focus,.fg2 textarea:focus { border-color:var(--violet); box-shadow:0 0 0 3px rgba(91,54,242,0.1); }
   .fg2 textarea { resize:vertical; min-height:82px; }
   .fcol2 { grid-column:1/-1; }
   .sub-btn { width:100%; background:var(--ink); color:var(--paper); border:none; padding:0.95rem; font-family:var(--sans); font-size:0.88rem; font-weight:700; border-radius:var(--r-sm); cursor:pointer; transition:all 0.3s cubic-bezier(.22,1,.36,1); margin-top:0.45rem; letter-spacing:0.02em; }
   .sub-btn:hover { background:var(--violet); box-shadow:0 10px 32px rgba(91,54,242,0.35); transform:translateY(-1px); }
 
   /* ── CONTACT ── */
-  .contact-wrap { max-width:660px; margin:0 auto; padding:3.5rem 2.5rem; }
+  .contact-wrap { max-width:660px; margin:0 auto; padding:3.5rem 2.5rem; animation:pageSlideUp 0.6s cubic-bezier(.22,1,.36,1) both; }
   .ctabs { display:flex; border-bottom:1px solid var(--border); margin-bottom:2rem; }
   .ctab { background:none; border:none; padding:0.68rem 1.4rem; font-family:var(--sans); font-size:0.85rem; font-weight:500; cursor:pointer; color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-1px; transition:all 0.25s; }
   .ctab.active { color:var(--violet); border-bottom-color:var(--violet); }
@@ -493,7 +533,7 @@ const css = `
   .cdwrap { max-width:1000px; margin:0 auto; padding:2rem 2.5rem; }
 
   /* ── BREADCRUMB ── */
-  .breadcrumb { font-size:0.78rem; color:var(--muted); padding:1rem 2.5rem; max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:0.45rem; }
+  .breadcrumb { font-size:0.78rem; color:var(--muted); padding:1rem 2.5rem; max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:0.45rem; animation:fadeIn 0.4s ease both; }
   .bc-btn { background:none; border:none; color:var(--muted); cursor:pointer; font-family:var(--sans); font-size:0.78rem; transition:all 0.2s; padding:2px 4px; border-radius:4px; }
   .bc-btn:hover { color:var(--violet); background:var(--violet-pale); }
 
@@ -515,58 +555,30 @@ const css = `
   .modal-detail-row:not(:last-child) { border-bottom:1px solid var(--border); }
   .modal-detail-label { color:var(--muted); }
   .modal-detail-value { font-weight:600; color:var(--ink); }
-  .modal-confetti { position:absolute; pointer-events:none; width:12px; height:12px; border-radius:3px; }
+  .modal-confetti { position:absolute; pointer-events:none; border-radius:3px; }
   .modal-btn-primary { width:100%; background:linear-gradient(135deg,var(--violet),var(--violet-light)); color:#fff; border:none; padding:0.9rem; font-family:var(--sans); font-size:0.88rem; font-weight:700; border-radius:var(--r-sm); cursor:pointer; box-shadow:0 6px 28px rgba(91,54,242,0.35); transition:all 0.3s cubic-bezier(.34,1.56,.64,1); margin-bottom:0.65rem; }
   .modal-btn-primary:hover { transform:translateY(-2px); box-shadow:0 10px 40px rgba(91,54,242,0.45); }
   .modal-btn-secondary { width:100%; background:none; border:1px solid var(--border); padding:0.78rem; font-family:var(--sans); font-size:0.84rem; font-weight:500; border-radius:var(--r-sm); cursor:pointer; transition:all 0.25s; color:var(--muted); }
   .modal-btn-secondary:hover { border-color:var(--border2); color:var(--ink); }
 
-  /* ═══════════════════════════════════════
-     SOCIAL PAGE — WITH REAL LINKS
-  ═══════════════════════════════════════ */
-  .social-wrap { max-width:760px; margin:0 auto; padding:4rem 2.5rem; }
+  /* ── SOCIAL ── */
+  .social-wrap { max-width:760px; margin:0 auto; padding:4rem 2.5rem; animation:pageSlideUp 0.6s cubic-bezier(.22,1,.36,1) both; }
   .social-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:2rem; }
-
-  .social-card {
-    border-radius:var(--r-lg); padding:1.6rem; cursor:pointer;
-    position:relative; overflow:hidden; display:block;
-    animation:cardEntrance 0.5s cubic-bezier(.22,1,.36,1) both;
-    text-decoration:none; border:1px solid transparent;
-    transition:transform 0.35s cubic-bezier(.22,1,.36,1), box-shadow 0.35s;
-  }
+  .social-card { border-radius:var(--r-lg); padding:1.6rem; cursor:pointer; position:relative; overflow:hidden; display:block; animation:cardEntrance 0.5s cubic-bezier(.22,1,.36,1) both; text-decoration:none; border:1px solid transparent; transition:transform 0.35s cubic-bezier(.22,1,.36,1),box-shadow 0.35s; }
   .social-card::before { content:''; position:absolute; inset:0; opacity:0; background:rgba(255,255,255,0.06); transition:opacity 0.25s; }
   .social-card:hover { transform:translateY(-8px) scale(1.025); }
   .social-card:hover::before { opacity:1; }
-
-  /* Shine effect */
-  .social-card::after {
-    content:''; position:absolute; top:-50%; left:-100%; width:60%; height:200%;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
-    transform:skewX(-20deg); transition:left 0.6s ease;
-  }
+  .social-card::after { content:''; position:absolute; top:-50%; left:-100%; width:60%; height:200%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent); transform:skewX(-20deg); transition:left 0.6s ease; }
   .social-card:hover::after { left:180%; }
-
   .social-card-logo { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:1rem; font-size:1.1rem; font-weight:900; font-family:var(--display); flex-shrink:0; }
   .social-card-name { font-family:var(--display); font-weight:700; font-size:1.05rem; margin-bottom:0.25rem; }
   .social-card-sub { font-size:0.78rem; opacity:0.65; margin-bottom:0.75rem; }
   .social-card-stats { display:flex; gap:1rem; margin-bottom:0.9rem; }
   .social-stat { font-size:0.72rem; opacity:0.75; }
   .social-stat strong { font-weight:700; font-size:0.88rem; display:block; opacity:1; }
-  .social-follow-btn {
-    display:inline-flex; align-items:center; gap:6px;
-    background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25);
-    border-radius:100px; padding:6px 14px; font-size:0.72rem; font-weight:700;
-    letter-spacing:0.04em; text-transform:uppercase; transition:all 0.25s;
-  }
+  .social-follow-btn { display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.15); border:1px solid rgba(255,255,255,0.25); border-radius:100px; padding:6px 14px; font-size:0.72rem; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; transition:all 0.25s; }
   .social-card:hover .social-follow-btn { background:rgba(255,255,255,0.25); }
-
-  /* Social ads banner */
-  .social-ads-banner {
-    background:linear-gradient(135deg,#0f0c1e,#1a1533);
-    border:1px solid rgba(91,54,242,0.3); border-radius:var(--r-lg);
-    padding:1.75rem 2rem; margin-bottom:1.5rem; position:relative; overflow:hidden;
-    animation:fadeUp 0.5s 0.2s cubic-bezier(.22,1,.36,1) both;
-  }
+  .social-ads-banner { background:linear-gradient(135deg,#0f0c1e,#1a1533); border:1px solid rgba(91,54,242,0.3); border-radius:var(--r-lg); padding:1.75rem 2rem; margin-bottom:1.5rem; position:relative; overflow:hidden; animation:fadeUp 0.5s 0.2s cubic-bezier(.22,1,.36,1) both; }
   .social-ads-banner::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:radial-gradient(circle,rgba(91,54,242,0.2),transparent 70%); border-radius:50%; }
   .ads-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.3); border-radius:100px; padding:4px 12px; font-size:0.7rem; font-weight:700; color:var(--gold); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:0.85rem; }
   .ads-title { font-family:var(--serif); font-size:1.25rem; color:#fff; margin-bottom:0.4rem; }
@@ -577,12 +589,11 @@ const css = `
   .ads-stat-lbl { font-size:0.69rem; color:rgba(255,255,255,0.35); text-transform:uppercase; letter-spacing:0.07em; font-weight:600; }
   .ads-cta { background:linear-gradient(135deg,var(--violet),var(--violet-light)); color:#fff; border:none; padding:0.7rem 1.5rem; border-radius:100px; font-family:var(--sans); font-size:0.82rem; font-weight:700; cursor:pointer; box-shadow:0 4px 20px rgba(91,54,242,0.4); transition:all 0.3s cubic-bezier(.34,1.56,.64,1); }
   .ads-cta:hover { transform:scale(1.05); box-shadow:0 8px 32px rgba(91,54,242,0.55); }
-
   .social-newsletter { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:2rem; text-align:center; margin-bottom:1.5rem; }
   .nl-title { font-family:var(--serif); font-size:1.4rem; margin-bottom:0.4rem; }
   .nl-sub { font-size:0.84rem; color:var(--muted); margin-bottom:1.25rem; font-weight:300; }
   .nl-form { display:flex; gap:0.6rem; max-width:380px; margin:0 auto; }
-  .nl-input { flex:1; border:1px solid var(--border); border-radius:100px; padding:0.65rem 1rem; font-family:var(--sans); font-size:0.85rem; outline:none; background:var(--paper); color:var(--ink); transition:border-color 0.25s, box-shadow 0.25s; }
+  .nl-input { flex:1; border:1px solid var(--border); border-radius:100px; padding:0.65rem 1rem; font-family:var(--sans); font-size:0.85rem; outline:none; background:var(--paper); color:var(--ink); transition:border-color 0.25s,box-shadow 0.25s; }
   .nl-input:focus { border-color:var(--violet); box-shadow:0 0 0 3px rgba(91,54,242,0.1); }
   .nl-btn { background:linear-gradient(135deg,var(--violet),var(--violet-light)); color:#fff; border:none; padding:0.65rem 1.25rem; border-radius:100px; font-family:var(--sans); font-size:0.82rem; font-weight:700; cursor:pointer; white-space:nowrap; transition:all 0.3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 4px 16px rgba(91,54,242,0.35); }
   .nl-btn:hover { transform:scale(1.05); box-shadow:0 6px 24px rgba(91,54,242,0.5); }
@@ -592,54 +603,32 @@ const css = `
   .comm-num { font-family:var(--serif); font-size:1.4rem; font-style:italic; display:block; margin-bottom:0.2rem; }
   .comm-label { font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; font-weight:600; }
 
-  /* ═══════════════════════════════════════
-     SUBSCRIPTION / PLANS PAGE
-  ═══════════════════════════════════════ */
-  .plans-wrap { max-width:1100px; margin:0 auto; padding:4rem 2.5rem; }
+  /* ════════════════════════════════════════
+     PLANS PAGE — PREMIUM
+  ════════════════════════════════════════ */
+  .plans-wrap { max-width:1100px; margin:0 auto; padding:4rem 2.5rem; animation:pageSlideUp 0.6s cubic-bezier(.22,1,.36,1) both; }
   .plans-hero { text-align:center; margin-bottom:3.5rem; }
   .plans-hero-badge { display:inline-flex; align-items:center; gap:7px; background:var(--violet-pale); border:1px solid var(--border2); border-radius:100px; padding:6px 16px; font-size:0.73rem; font-weight:700; color:var(--violet); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:1.25rem; }
   .plans-hero h1 { font-family:var(--serif); font-size:clamp(2rem,4vw,3.2rem); font-weight:400; letter-spacing:-0.02em; margin-bottom:0.75rem; }
   .plans-hero h1 em { font-style:italic; color:var(--violet); }
   .plans-hero p { font-size:1rem; color:var(--muted); max-width:480px; margin:0 auto 2rem; line-height:1.75; font-weight:300; }
-
-  /* Billing toggle */
-  .billing-toggle { display:inline-flex; align-items:center; gap:0; background:var(--surface); border:1px solid var(--border); border-radius:100px; padding:4px; margin-bottom:3rem; }
+  .billing-toggle { display:inline-flex; align-items:center; background:var(--surface); border:1px solid var(--border); border-radius:100px; padding:4px; margin-bottom:3rem; }
   .billing-opt { background:none; border:none; padding:0.5rem 1.25rem; border-radius:100px; font-family:var(--sans); font-size:0.82rem; font-weight:500; cursor:pointer; color:var(--muted); transition:all 0.3s; }
   .billing-opt.active { background:var(--ink); color:#fff; font-weight:700; }
   .billing-save { background:var(--teal-pale); color:#006e5a; font-size:0.68rem; font-weight:700; padding:3px 8px; border-radius:100px; margin-left:4px; }
-
-  /* Plan cards */
   .plans-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1.25rem; margin-bottom:3rem; }
-  .plan-card {
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl);
-    padding:2rem; position:relative; overflow:hidden;
-    transition:all 0.35s cubic-bezier(.22,1,.36,1);
-    animation:priceIn 0.6s cubic-bezier(.22,1,.36,1) both;
-  }
+  .plan-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl); padding:2rem; position:relative; overflow:hidden; transition:all 0.35s cubic-bezier(.22,1,.36,1); animation:priceIn 0.6s cubic-bezier(.22,1,.36,1) both; }
   .plan-card:hover { transform:translateY(-8px); box-shadow:0 24px 60px rgba(91,54,242,0.12); border-color:var(--border2); }
-  .plan-card.featured {
-    background:linear-gradient(135deg,#06040f 0%,#120f26 100%);
-    border-color:rgba(91,54,242,0.5); color:#fff;
-    box-shadow:0 16px 48px rgba(91,54,242,0.25);
-    animation:glowPulse 4s ease-in-out infinite, priceIn 0.6s cubic-bezier(.22,1,.36,1) both;
-  }
+  .plan-card.featured { background:linear-gradient(135deg,#06040f 0%,#120f26 100%); border-color:rgba(91,54,242,0.5); color:#fff; box-shadow:0 16px 48px rgba(91,54,242,0.25); animation:glowPulse 4s ease-in-out infinite,priceIn 0.6s cubic-bezier(.22,1,.36,1) both; }
   .plan-card.featured:hover { transform:translateY(-10px); box-shadow:0 32px 80px rgba(91,54,242,0.35); }
   .plan-featured-badge { position:absolute; top:1.25rem; right:1.25rem; background:linear-gradient(135deg,var(--violet),var(--violet-light)); color:#fff; font-size:0.65rem; font-weight:800; padding:4px 10px; border-radius:100px; letter-spacing:0.06em; text-transform:uppercase; }
-
-  /* Shimmer on featured */
-  .plan-card.featured::before {
-    content:''; position:absolute; top:0; left:-100%; width:50%; height:100%;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);
-    animation:shimmerSlide 3s ease-in-out infinite;
-  }
-
+  .plan-card.featured::before { content:''; position:absolute; top:0; left:-100%; width:50%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent); animation:shimmerSlide 3s ease-in-out infinite; }
   .plan-tier { font-size:0.72rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); margin-bottom:0.5rem; }
   .plan-card.featured .plan-tier { color:rgba(255,255,255,0.4); }
   .plan-name { font-family:var(--serif); font-size:1.5rem; font-weight:400; margin-bottom:0.35rem; }
   .plan-card.featured .plan-name { color:#fff; }
   .plan-desc { font-size:0.82rem; color:var(--muted); margin-bottom:1.75rem; line-height:1.6; }
   .plan-card.featured .plan-desc { color:rgba(255,255,255,0.45); }
-
   .plan-price-row { display:flex; align-items:baseline; gap:4px; margin-bottom:0.3rem; }
   .plan-currency { font-size:1.1rem; font-weight:700; color:var(--ink); }
   .plan-card.featured .plan-currency { color:#fff; }
@@ -649,10 +638,8 @@ const css = `
   .plan-card.featured .plan-period { color:rgba(255,255,255,0.4); }
   .plan-annual-note { font-size:0.72rem; color:var(--teal); font-weight:600; margin-bottom:1.75rem; }
   .plan-card:not(.featured) .plan-annual-note { color:var(--violet); }
-
   .plan-divider { border:none; border-top:1px solid var(--border); margin:1.5rem 0; }
   .plan-card.featured .plan-divider { border-color:rgba(255,255,255,0.1); }
-
   .plan-features { list-style:none; margin-bottom:2rem; }
   .plan-feature { display:flex; align-items:flex-start; gap:0.65rem; padding:0.38rem 0; font-size:0.83rem; line-height:1.5; }
   .plan-check { width:18px; height:18px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; margin-top:1px; }
@@ -664,7 +651,6 @@ const css = `
   .plan-card.featured .feature-text { color:rgba(255,255,255,0.8); }
   .feature-text.dimmed { color:var(--muted2); text-decoration:line-through; }
   .plan-card.featured .feature-text.dimmed { color:rgba(255,255,255,0.2); }
-
   .plan-btn { width:100%; padding:0.88rem; border-radius:var(--r-md); font-family:var(--sans); font-size:0.87rem; font-weight:700; cursor:pointer; transition:all 0.3s cubic-bezier(.34,1.56,.64,1); letter-spacing:0.02em; border:none; }
   .plan-btn-outline { background:none; border:1px solid var(--border); color:var(--ink); }
   .plan-btn-outline:hover { border-color:var(--violet); color:var(--violet); background:var(--violet-pale); transform:scale(1.02); }
@@ -672,8 +658,6 @@ const css = `
   .plan-btn-primary:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 10px 40px rgba(91,54,242,0.55); }
   .plan-btn-gold { background:linear-gradient(135deg,#f59e0b,#fbbf24); color:#1a0e00; box-shadow:0 6px 28px rgba(245,158,11,0.35); }
   .plan-btn-gold:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 10px 40px rgba(245,158,11,0.5); }
-
-  /* Plan comparison table */
   .plans-compare { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); overflow:hidden; margin-bottom:3rem; }
   .compare-head { background:var(--paper); padding:1.5rem 2rem; border-bottom:1px solid var(--border); }
   .compare-head h3 { font-family:var(--serif); font-size:1.3rem; font-weight:400; }
@@ -687,8 +671,6 @@ const css = `
   .ct-check { color:var(--teal); font-size:1rem; }
   .ct-x { color:var(--muted2); font-size:0.9rem; }
   .ct-feat-col { background:rgba(91,54,242,0.04); }
-
-  /* Plans FAQ */
   .plans-faq { margin-bottom:3rem; }
   .faq-title { font-family:var(--serif); font-size:1.5rem; font-weight:400; margin-bottom:1.5rem; }
   .faq-item { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); margin-bottom:0.65rem; overflow:hidden; }
@@ -697,13 +679,264 @@ const css = `
   .faq-arrow { color:var(--muted); transition:transform 0.3s; flex-shrink:0; }
   .faq-arrow.open { transform:rotate(180deg); color:var(--violet); }
   .faq-a { padding:0 1.4rem 1.1rem; font-size:0.83rem; color:var(--muted); line-height:1.7; }
-
-  /* Enterprise strip */
   .enterprise-strip { background:linear-gradient(135deg,#06040f,#120f26); border:1px solid rgba(91,54,242,0.25); border-radius:var(--r-xl); padding:2.5rem; display:flex; justify-content:space-between; align-items:center; gap:2rem; flex-wrap:wrap; }
   .enterprise-text h3 { font-family:var(--serif); font-size:1.5rem; color:#fff; margin-bottom:0.4rem; }
   .enterprise-text p { font-size:0.85rem; color:rgba(255,255,255,0.4); max-width:420px; line-height:1.65; }
   .enterprise-btn { background:none; border:1px solid rgba(255,255,255,0.2); color:#fff; padding:0.75rem 1.75rem; border-radius:100px; font-family:var(--sans); font-size:0.85rem; font-weight:700; cursor:pointer; transition:all 0.3s; white-space:nowrap; flex-shrink:0; }
   .enterprise-btn:hover { background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.4); transform:scale(1.04); }
+
+  /* ════════════════════════════════════════
+     PREMIUM PLAN CONFIRMATION MODAL
+     (Banks · UPI · Cards)
+  ════════════════════════════════════════ */
+  .plan-confirm-overlay {
+    position:fixed; inset:0; z-index:600;
+    background:rgba(4,2,14,0.75); backdrop-filter:blur(12px);
+    display:flex; align-items:center; justify-content:center; padding:1rem;
+    animation:overlayIn 0.35s ease both;
+  }
+  .plan-confirm-modal {
+    background:linear-gradient(180deg,#fcfbff 0%,#f4f1ff 100%);
+    border-radius:28px; width:min(940px,100%);
+    border:1px solid rgba(91,54,242,0.14);
+    box-shadow:0 40px 100px rgba(14,8,33,0.28);
+    overflow:hidden; position:relative;
+    animation:planConfirmIn 0.55s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .plan-confirm-modal::before {
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(circle at 80% 0%,rgba(91,54,242,0.1),transparent 30%),
+               radial-gradient(circle at 10% 95%,rgba(0,201,167,0.08),transparent 25%);
+    pointer-events:none;
+  }
+  .pcm-grid {
+    position:relative; z-index:1;
+    display:grid; grid-template-columns:1.1fr 0.9fr;
+  }
+  @media(max-width:820px){ .pcm-grid{grid-template-columns:1fr} }
+
+  /* Left dark panel */
+  .pcm-left {
+    background:linear-gradient(160deg,#060411 0%,#130e28 55%,#1d1640 100%);
+    padding:2.2rem 2rem; position:relative; overflow:hidden; color:#fff;
+  }
+  .pcm-left::after {
+    content:''; position:absolute; bottom:-60px; right:-50px;
+    width:220px; height:220px; border-radius:50%;
+    background:radial-gradient(circle,rgba(91,54,242,0.2),transparent 70%);
+    animation:successOrb 6s ease-in-out infinite;
+  }
+  .pcm-badge {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 13px; border-radius:100px;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.14);
+    font-size:0.68rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;
+    color:rgba(255,255,255,0.7); margin-bottom:1.2rem;
+    animation:confirmStagger 0.5s 0.1s cubic-bezier(.22,1,.36,1) both;
+  }
+  .pcm-title {
+    font-family:var(--serif); font-size:2rem; line-height:1.1;
+    margin-bottom:0.5rem;
+    animation:confirmStagger 0.5s 0.18s cubic-bezier(.22,1,.36,1) both;
+  }
+  .pcm-sub {
+    color:rgba(255,255,255,0.55); font-size:0.86rem; line-height:1.7;
+    margin-bottom:1.8rem;
+    animation:confirmStagger 0.5s 0.26s cubic-bezier(.22,1,.36,1) both;
+  }
+  .pcm-summary {
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1);
+    border-radius:20px; padding:1.15rem 1.2rem;
+    backdrop-filter:blur(16px); margin-bottom:1.2rem;
+    animation:confirmStagger 0.5s 0.34s cubic-bezier(.22,1,.36,1) both;
+  }
+  .pcm-row { display:flex; justify-content:space-between; gap:1rem; padding:0.38rem 0; font-size:0.84rem; color:rgba(255,255,255,0.65); }
+  .pcm-row strong { color:#fff; font-weight:700; }
+  .pcm-row.total { border-top:1px solid rgba(255,255,255,0.1); margin-top:0.3rem; padding-top:0.7rem; font-size:0.95rem; }
+  .pcm-secure-note {
+    display:flex; align-items:center; gap:8px;
+    background:rgba(0,201,167,0.1); border:1px solid rgba(0,201,167,0.2);
+    border-radius:12px; padding:0.75rem 1rem;
+    font-size:0.78rem; color:#00c9a7;
+    animation:confirmStagger 0.5s 0.42s cubic-bezier(.22,1,.36,1) both;
+  }
+
+  /* Right form panel */
+  .pcm-right { padding:2.2rem 2rem; background:#fff; }
+  .pcm-right-title {
+    font-family:var(--serif); font-size:1.2rem; font-weight:400;
+    margin-bottom:0.4rem;
+    animation:confirmStagger 0.5s 0.2s cubic-bezier(.22,1,.36,1) both;
+  }
+  .pcm-right-sub {
+    font-size:0.8rem; color:var(--muted); margin-bottom:1.4rem;
+    animation:confirmStagger 0.5s 0.28s cubic-bezier(.22,1,.36,1) both;
+  }
+
+  /* Payment method tabs */
+  .pay-method-tabs {
+    display:flex; gap:0; background:var(--paper);
+    border:1px solid var(--border); border-radius:14px;
+    padding:4px; margin-bottom:1.4rem;
+    animation:confirmStagger 0.5s 0.36s cubic-bezier(.22,1,.36,1) both;
+  }
+  .pay-method-tab {
+    flex:1; background:none; border:none; padding:0.55rem 0.5rem;
+    font-family:var(--sans); font-size:0.78rem; font-weight:600;
+    color:var(--muted); border-radius:10px; cursor:pointer;
+    transition:all 0.3s cubic-bezier(.22,1,.36,1);
+    display:flex; align-items:center; justify-content:center; gap:5px;
+  }
+  .pay-method-tab.active {
+    background:#fff; color:var(--violet);
+    box-shadow:0 2px 12px rgba(91,54,242,0.12);
+  }
+  .pay-method-tab-icon { font-size:14px; }
+
+  /* Bank transfer panel */
+  .bank-panel { animation:bankCardSlide 0.45s cubic-bezier(.22,1,.36,1) both; }
+  .bank-list { display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.2rem; }
+  .bank-item {
+    display:flex; align-items:center; gap:0.9rem;
+    background:var(--paper); border:1.5px solid var(--border);
+    border-radius:14px; padding:0.85rem 1rem; cursor:pointer;
+    transition:all 0.3s cubic-bezier(.22,1,.36,1);
+    animation:bankCardSlide 0.4s cubic-bezier(.22,1,.36,1) both;
+  }
+  .bank-item:nth-child(1){animation-delay:0.05s}
+  .bank-item:nth-child(2){animation-delay:0.12s}
+  .bank-item:nth-child(3){animation-delay:0.19s}
+  .bank-item:nth-child(4){animation-delay:0.26s}
+  .bank-item:hover { border-color:var(--violet); background:var(--violet-pale); transform:translateX(4px); }
+  .bank-item.selected { border-color:var(--violet); background:linear-gradient(135deg,#f5f2ff,#fff); box-shadow:0 0 0 3px rgba(91,54,242,0.1); }
+  .bank-logo { width:42px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:800; font-family:var(--display); flex-shrink:0; }
+  .bank-name { font-weight:600; font-size:0.88rem; flex:1; }
+  .bank-type { font-size:0.7rem; color:var(--muted); }
+  .bank-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.25s; }
+  .bank-item.selected .bank-check { background:var(--violet); border-color:var(--violet); color:#fff; font-size:11px; }
+
+  /* UPI panel */
+  .upi-panel { animation:confirmStagger 0.4s cubic-bezier(.22,1,.36,1) both; }
+  .upi-logo-row { display:flex; gap:0.65rem; margin-bottom:1.2rem; flex-wrap:wrap; }
+  .upi-app {
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding:0.7rem 0.9rem; border:1.5px solid var(--border); border-radius:14px;
+    cursor:pointer; flex:1; min-width:70px; text-align:center;
+    transition:all 0.3s cubic-bezier(.34,1.56,.64,1);
+    animation:upiPopIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
+    background:var(--paper);
+  }
+  .upi-app:nth-child(1){animation-delay:0.05s}
+  .upi-app:nth-child(2){animation-delay:0.12s}
+  .upi-app:nth-child(3){animation-delay:0.19s}
+  .upi-app:nth-child(4){animation-delay:0.26s}
+  .upi-app:hover { border-color:var(--violet); transform:translateY(-4px) scale(1.05); box-shadow:0 10px 28px rgba(91,54,242,0.14); }
+  .upi-app.selected { border-color:var(--violet); background:var(--violet-pale); box-shadow:0 0 0 3px rgba(91,54,242,0.1); }
+  .upi-icon { font-size:1.5rem; }
+  .upi-label { font-size:0.65rem; font-weight:700; color:var(--ink); }
+  .upi-id-wrap { position:relative; margin-bottom:1.1rem; }
+  .upi-id-input { width:100%; border:1.5px solid var(--border); border-radius:12px; padding:0.78rem 1rem 0.78rem 2.5rem; font-family:var(--sans); font-size:0.88rem; outline:none; background:var(--paper); color:var(--ink); transition:border-color 0.25s,box-shadow 0.25s; }
+  .upi-id-input:focus { border-color:var(--violet); box-shadow:0 0 0 3px rgba(91,54,242,0.1); }
+  .upi-id-prefix { position:absolute; left:0.8rem; top:50%; transform:translateY(-50%); font-size:1rem; pointer-events:none; }
+  .upi-verify-btn { width:100%; background:linear-gradient(135deg,#4752c4,#7289da); color:#fff; border:none; padding:0.78rem; border-radius:12px; font-family:var(--sans); font-size:0.85rem; font-weight:700; cursor:pointer; transition:all 0.3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 4px 16px rgba(71,82,196,0.35); }
+  .upi-verify-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(71,82,196,0.45); }
+
+  /* Card panel */
+  .card-panel { animation:confirmStagger 0.4s cubic-bezier(.22,1,.36,1) both; }
+  .card-visual {
+    background:linear-gradient(135deg,#5b36f2,#9b7ff7,#00c9a7);
+    border-radius:18px; padding:1.5rem 1.4rem; margin-bottom:1.4rem;
+    color:#fff; position:relative; overflow:hidden;
+    animation:bankCardSlide 0.5s cubic-bezier(.22,1,.36,1) both;
+    box-shadow:0 12px 40px rgba(91,54,242,0.35);
+  }
+  .card-visual::before {
+    content:''; position:absolute; top:-30px; right:-30px;
+    width:120px; height:120px; border-radius:50%;
+    background:rgba(255,255,255,0.12);
+  }
+  .card-visual::after {
+    content:''; position:absolute; bottom:-20px; left:60px;
+    width:80px; height:80px; border-radius:50%;
+    background:rgba(255,255,255,0.08);
+  }
+  .card-chip { width:34px; height:26px; background:rgba(255,255,255,0.3); border-radius:6px; margin-bottom:1.2rem; display:flex; align-items:center; justify-content:center; font-size:18px; }
+  .card-number { font-family:monospace; font-size:1rem; letter-spacing:0.22em; margin-bottom:1rem; opacity:0.92; }
+  .card-row { display:flex; justify-content:space-between; font-size:0.72rem; opacity:0.75; text-transform:uppercase; letter-spacing:0.07em; }
+  .pay-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.75rem; }
+  .pay-field { display:flex; flex-direction:column; gap:0.4rem; margin-bottom:0.85rem; }
+  .pay-field.full { grid-column:1/-1; }
+  .pay-field label { font-size:0.7rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); }
+  .pay-field input,.pay-field select { border:1.5px solid var(--border); background:var(--paper); border-radius:12px; padding:0.78rem 0.95rem; font-family:var(--sans); font-size:0.88rem; outline:none; transition:border-color 0.25s,box-shadow 0.25s,transform 0.25s; color:var(--ink); }
+  .pay-field input:focus,.pay-field select:focus { border-color:var(--violet); box-shadow:0 0 0 3px rgba(91,54,242,0.1); transform:translateY(-1px); }
+
+  /* Action buttons */
+  .pcm-actions { display:flex; gap:0.75rem; margin-top:1.2rem; }
+  .pcm-btn-cancel { flex:1; border:1.5px solid var(--border); background:#fff; color:var(--ink); border-radius:14px; padding:0.88rem 1rem; font-family:var(--sans); font-size:0.86rem; font-weight:700; cursor:pointer; transition:all 0.25s; }
+  .pcm-btn-cancel:hover { border-color:var(--border2); color:var(--muted); }
+  .pcm-btn-pay {
+    flex:1.4; border:none;
+    background:linear-gradient(135deg,var(--violet),var(--violet-light));
+    color:#fff; border-radius:14px; padding:0.88rem 1rem;
+    font-family:var(--sans); font-size:0.86rem; font-weight:700;
+    cursor:pointer; box-shadow:0 8px 28px rgba(91,54,242,0.35);
+    transition:all 0.3s cubic-bezier(.34,1.56,.64,1);
+    position:relative; overflow:hidden;
+  }
+  .pcm-btn-pay::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent); opacity:0; transition:opacity 0.25s; }
+  .pcm-btn-pay:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 14px 40px rgba(91,54,242,0.48); }
+  .pcm-btn-pay:hover::before { opacity:1; }
+
+  /* ── SUCCESS SCREEN ── */
+  .pcm-success {
+    position:relative; z-index:1; text-align:center;
+    padding:3rem 2.5rem 2.5rem; min-height:500px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+  }
+  .pcm-success-ring-wrap {
+    position:relative; width:110px; height:110px; margin:0 auto 1.5rem;
+  }
+  .pcm-success-ring {
+    width:110px; height:110px; border-radius:50%;
+    background:linear-gradient(135deg,rgba(0,201,167,0.18),rgba(91,54,242,0.22));
+    display:flex; align-items:center; justify-content:center;
+    animation:confirmRingExpand 0.7s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .pcm-success-ring-pulse {
+    position:absolute; inset:0; border-radius:50%;
+    border:2px solid var(--teal); opacity:0;
+    animation:successPulseRing 1.8s 0.6s ease-out infinite;
+  }
+  .pcm-success-check { animation:confirmRingExpand 0.6s 0.2s cubic-bezier(.34,1.56,.64,1) both; font-size:2.6rem; }
+  .pcm-success-title {
+    font-family:var(--serif); font-size:2.1rem; font-weight:400;
+    margin-bottom:0.55rem;
+    animation:confirmStagger 0.5s 0.35s cubic-bezier(.22,1,.36,1) both;
+  }
+  .pcm-success-sub {
+    font-size:0.88rem; color:var(--muted); line-height:1.7;
+    max-width:400px; margin:0 auto 1.8rem;
+    animation:confirmStagger 0.5s 0.45s cubic-bezier(.22,1,.36,1) both;
+  }
+  .pcm-success-stats {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:0.85rem;
+    width:100%; margin-bottom:1.8rem;
+  }
+  .pcm-stat {
+    background:#fff; border:1px solid rgba(91,54,242,0.12);
+    border-radius:18px; padding:1rem 0.8rem; text-align:center;
+    animation:statCardPop 0.6s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .pcm-stat:nth-child(1){animation-delay:0.5s}
+  .pcm-stat:nth-child(2){animation-delay:0.62s}
+  .pcm-stat:nth-child(3){animation-delay:0.74s}
+  .pcm-stat strong { display:block; font-family:var(--serif); font-size:1.3rem; font-style:italic; margin-bottom:0.2rem; }
+  .pcm-stat span { font-size:0.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.07em; font-weight:700; }
+  .pcm-success-btn { background:linear-gradient(135deg,var(--violet),var(--violet-light)); color:#fff; border:none; padding:0.9rem 2.5rem; border-radius:100px; font-family:var(--sans); font-size:0.88rem; font-weight:700; cursor:pointer; box-shadow:0 8px 28px rgba(91,54,242,0.35); transition:all 0.3s cubic-bezier(.34,1.56,.64,1); animation:confirmStagger 0.5s 0.85s cubic-bezier(.22,1,.36,1) both; }
+  .pcm-success-btn:hover { transform:translateY(-2px) scale(1.04); box-shadow:0 14px 40px rgba(91,54,242,0.48); }
+
+  /* Confetti pieces */
+  .pcm-confetti { position:absolute; pointer-events:none; border-radius:3px; }
 
   /* ── FOOTER ── */
   .footer { background:#06040f; color:rgba(255,255,255,0.28); padding:3rem 2.5rem 2rem; border-top:1px solid rgba(255,255,255,0.05); }
@@ -721,7 +954,7 @@ const css = `
   .fsoc:hover { background:rgba(91,54,242,0.25); border-color:rgba(91,54,242,0.4); transform:translateY(-3px); color:#fff; }
 `;
 
-// ─── IMAGES ───────────────────────────────────────────────────────────────
+// ─── DATA ───────────────────────────────────────────────────────────────
 const COMPANY_IMGS = {
   1:"https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=80&h=80&fit=crop&q=80",
   2:"https://images.unsplash.com/photo-1563986768609-322da13575f3?w=80&h=80&fit=crop&q=80",
@@ -771,75 +1004,19 @@ const NOTIFICATIONS = [
   { color:"#f5a623", text:"Your Pro trial expires in 3 days — upgrade to keep alerts", time:"1 day ago" },
 ];
 
-// ─── REAL SOCIAL MEDIA LINKS ───────────────────────────────────────────────
 const SOCIALS = [
-  {
-    name:"X / Twitter", handle:"@WorkBoardHQ",
-    logo:"𝕏", logoColor:"#fff", logoBg:"#000",
-    gradient:"linear-gradient(135deg,#000 0%,#222 100%)",
-    border:"rgba(255,255,255,0.1)",
-    followers:"48.2K", posts:"12.4K",
-    url:"https://twitter.com",
-    cta:"Follow",
-    delay:"0s",
-  },
-  {
-    name:"LinkedIn", handle:"WorkBoard Official",
-    logo:"in", logoColor:"#fff", logoBg:"#0077b5",
-    gradient:"linear-gradient(135deg,#0055a5 0%,#0077b5 100%)",
-    border:"rgba(0,119,181,0.3)",
-    followers:"112K", posts:"3.8K",
-    url:"https://linkedin.com",
-    cta:"Connect",
-    delay:"0.06s",
-  },
-  {
-    name:"YouTube", handle:"WorkBoard Careers",
-    logo:"▶", logoColor:"#fff", logoBg:"#ff0000",
-    gradient:"linear-gradient(135deg,#c00 0%,#ff2222 100%)",
-    border:"rgba(255,0,0,0.2)",
-    followers:"23.4K", posts:"284",
-    url:"https://youtube.com",
-    cta:"Subscribe",
-    delay:"0.12s",
-  },
-  {
-    name:"Instagram", handle:"@workboard.io",
-    logo:"📸", logoColor:"#fff", logoBg:"#c13584",
-    gradient:"linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)",
-    border:"rgba(193,53,132,0.3)",
-    followers:"38.7K", posts:"1.2K",
-    url:"https://instagram.com",
-    cta:"Follow",
-    delay:"0.18s",
-  },
-  {
-    name:"Discord", handle:"Community Server",
-    logo:"💬", logoColor:"#fff", logoBg:"#5865f2",
-    gradient:"linear-gradient(135deg,#4752c4 0%,#7289da 100%)",
-    border:"rgba(88,101,242,0.3)",
-    followers:"14.9K", posts:"Online",
-    url:"https://discord.com",
-    cta:"Join",
-    delay:"0.24s",
-  },
-  {
-    name:"GitHub", handle:"workboard-hq",
-    logo:"⌥", logoColor:"#fff", logoBg:"#24292e",
-    gradient:"linear-gradient(135deg,#24292e 0%,#3a4049 100%)",
-    border:"rgba(255,255,255,0.08)",
-    followers:"6.1K", posts:"142",
-    url:"https://github.com",
-    cta:"Star",
-    delay:"0.30s",
-  },
+  { name:"X / Twitter", handle:"@WorkBoardHQ", logo:"𝕏", logoColor:"#fff", logoBg:"#000", gradient:"linear-gradient(135deg,#000 0%,#222 100%)", border:"rgba(255,255,255,0.1)", followers:"48.2K", posts:"12.4K", url:"https://twitter.com", cta:"Follow", delay:"0s" },
+  { name:"LinkedIn", handle:"WorkBoard Official", logo:"in", logoColor:"#fff", logoBg:"#0077b5", gradient:"linear-gradient(135deg,#0055a5 0%,#0077b5 100%)", border:"rgba(0,119,181,0.3)", followers:"112K", posts:"3.8K", url:"https://linkedin.com", cta:"Connect", delay:"0.06s" },
+  { name:"YouTube", handle:"WorkBoard Careers", logo:"▶", logoColor:"#fff", logoBg:"#ff0000", gradient:"linear-gradient(135deg,#c00 0%,#ff2222 100%)", border:"rgba(255,0,0,0.2)", followers:"23.4K", posts:"284", url:"https://youtube.com", cta:"Subscribe", delay:"0.12s" },
+  { name:"Instagram", handle:"@workboard.io", logo:"📸", logoColor:"#fff", logoBg:"#c13584", gradient:"linear-gradient(135deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)", border:"rgba(193,53,132,0.3)", followers:"38.7K", posts:"1.2K", url:"https://instagram.com", cta:"Follow", delay:"0.18s" },
+  { name:"Discord", handle:"Community Server", logo:"💬", logoColor:"#fff", logoBg:"#5865f2", gradient:"linear-gradient(135deg,#4752c4 0%,#7289da 100%)", border:"rgba(88,101,242,0.3)", followers:"14.9K", posts:"Online", url:"https://discord.com", cta:"Join", delay:"0.24s" },
+  { name:"GitHub", handle:"workboard-hq", logo:"⌥", logoColor:"#fff", logoBg:"#24292e", gradient:"linear-gradient(135deg,#24292e 0%,#3a4049 100%)", border:"rgba(255,255,255,0.08)", followers:"6.1K", posts:"142", url:"https://github.com", cta:"Star", delay:"0.30s" },
 ];
 
 // ─── HELPERS ──────────────────────────────────────────────────────────────
 function Badge({ variant, children }) {
   const cls = { type:"t-full", remote:"t-remote", level:"t-level", featured:"t-featured" };
-  const st = variant==="type" ? {background:"#d6fdf6",color:"#006e5a"} : {};
-  return <span className={`tag ${cls[variant]||"t-level"}`} style={st}>{children}</span>;
+  return <span className={`tag ${cls[variant]||"t-level"}`}>{children}</span>;
 }
 
 function CoLogo({ companyId, fallback, color, bg, size=48, radius=13 }) {
@@ -849,13 +1026,20 @@ function CoLogo({ companyId, fallback, color, bg, size=48, radius=13 }) {
   return <div style={{width:size,height:size,borderRadius:radius,background:bg,color,display:"flex",alignItems:"center",justifyContent:"center",fontFamily:"var(--display)",fontWeight:800,fontSize:size*0.35,flexShrink:0}}>{fallback}</div>;
 }
 
-function JobCard({ job, saved, onSave, onClick, delay=0 }) {
+function JobCard({ job, saved, onSave, onClick, delay=0, premium=false }) {
   return (
-    <div className="job-card" style={{animationDelay:`${delay}s`}} onClick={()=>onClick(job)}>
+    <div className={`job-card${premium?" premium-card":""}`} style={{animationDelay:`${delay}s`}} onClick={()=>onClick(job)}>
+      {premium&&<><div className="premium-orb one"/><div className="premium-orb two"/></>}
       <div className="jc-top">
         <div className="jc-logo-wrap">
-          <CoLogo companyId={job.companyId} fallback={job.logo} color={job.color} bg={job.bg}/>
-          <div><div className="job-title-text">{job.title}</div><div className="job-co">{job.company} · {job.location}</div></div>
+          <div className="jc-logo-anim">
+            <CoLogo companyId={job.companyId} fallback={job.logo} color={job.color} bg={job.bg}/>
+          </div>
+          <div>
+            {premium&&<div className="premium-kicker"><span className="premium-kicker-dot"/>Signature Pick</div>}
+            <div className="job-title-text">{job.title}</div>
+            <div className="job-co">{job.company} · {job.location}</div>
+          </div>
         </div>
         <button className={`bk-btn${saved?" saved":""}`} onClick={e=>{e.stopPropagation();onSave(job.id);}}>
           {saved?"♥":"♡"}
@@ -875,17 +1059,24 @@ function JobCard({ job, saved, onSave, onClick, delay=0 }) {
   );
 }
 
-// ─── MODALS ───────────────────────────────────────────────────────────────
-function ConfettiPiece({style}){
-  return <div className="modal-confetti" style={{...style,animation:`confetti ${0.8+Math.random()*0.6}s ${Math.random()*0.3}s ease-out both`}}/>;
-}
+// ─── APPLY MODAL ────────────────────────────────────────────────────────
+function ConfettiPiece({style}){ return <div className="modal-confetti" style={{...style,width:"12px",height:"12px",animation:`confettiBurst ${0.7+Math.random()*0.5}s ${Math.random()*0.25}s ease-out both`}}/>; }
+
 function ApplyModal({job,onClose}){
   const colors=["#5b36f2","#00c9a7","#f24b6e","#f5a623","#9b7ff7"];
-  const confettis=Array.from({length:18},(_,i)=>({left:`${5+(i/18)*90}%`,top:`${60+Math.random()*30}%`,background:colors[i%colors.length],transform:`rotate(${Math.random()*360}deg)`,width:`${8+Math.random()*8}px`,height:`${8+Math.random()*8}px`,borderRadius:Math.random()>0.5?"50%":"3px"}));
+  const pieces=Array.from({length:22},(_,i)=>({
+    left:`${4+(i/22)*92}%`, top:`${55+Math.random()*35}%`,
+    background:colors[i%colors.length],
+    transform:`rotate(${Math.random()*360}deg)`,
+    '--cx':`${(Math.random()-0.5)*80}px`,
+    '--cy':`${-(40+Math.random()*80)}px`,
+    '--cr':`${(Math.random()-0.5)*720}deg`,
+    borderRadius:Math.random()>0.5?"50%":"3px",
+  }));
   return (
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
       <div className="modal">
-        {confettis.map((s,i)=><ConfettiPiece key={i} style={s}/>)}
+        {pieces.map((s,i)=><ConfettiPiece key={i} style={s}/>)}
         <div className="modal-icon-wrap">🎉</div>
         <div className="modal-title">Application Submitted!</div>
         <div className="modal-body">Your application for <strong>{job?.title}</strong> at <strong>{job?.company}</strong> has been sent. We'll notify you of updates.</div>
@@ -900,6 +1091,7 @@ function ApplyModal({job,onClose}){
     </div>
   );
 }
+
 function ResumeModal({fileName,onClose}){
   return (
     <div className="modal-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
@@ -919,10 +1111,192 @@ function ResumeModal({fileName,onClose}){
   );
 }
 
+// ═══════════════════════════════════════════════════════════
+// PREMIUM PLAN CONFIRMATION MODAL — Bank · UPI · Card
+// ═══════════════════════════════════════════════════════════
+const BANKS = [
+  { name:"HDFC Bank",   type:"Net Banking / UPI", color:"#c13b2f", bg:"#fde8e7", abbr:"HD" },
+  { name:"SBI",         type:"State Bank of India", color:"#003366", bg:"#e6eef7", abbr:"SB" },
+  { name:"ICICI Bank",  type:"Net Banking / UPI", color:"#b5451b", bg:"#fceae5", abbr:"IC" },
+  { name:"Axis Bank",   type:"Net Banking / UPI", color:"#97144d", bg:"#fce8f0", abbr:"AX" },
+];
+const UPI_APPS = [
+  { icon:"📱", label:"PhonePe", color:"#5f259f" },
+  { icon:"💚", label:"Google Pay", color:"#4285f4" },
+  { icon:"🅿️", label:"Paytm", color:"#002970" },
+  { icon:"🔵", label:"BHIM", color:"#0066cc" },
+];
+
+function PlanConfirmModal({ plan, billing, price, onClose, onSuccess }) {
+  const [tab, setTab] = useState("card");
+  const [selectedBank, setSelectedBank] = useState(null);
+  const [selectedUpi, setSelectedUpi] = useState(null);
+  const [confirmed, setConfirmed] = useState(false);
+  const [paying, setPaying] = useState(false);
+  const annual = billing === "annual";
+
+  const confettiPieces = Array.from({length:28},(_,i)=>({
+    left:`${4+(i/28)*92}%`, top:`${50+Math.random()*38}%`,
+    background:["#5b36f2","#00c9a7","#f24b6e","#f5a623","#9b7ff7","#fff"][i%6],
+    '--cx':`${(Math.random()-0.5)*120}px`,
+    '--cy':`${-(50+Math.random()*100)}px`,
+    '--cr':`${(Math.random()-0.5)*800}deg`,
+    borderRadius:Math.random()>0.5?"50%":"3px",
+    width:`${8+Math.random()*8}px`, height:`${8+Math.random()*8}px`,
+  }));
+
+  const handlePay = () => {
+    setPaying(true);
+    setTimeout(()=>{ setPaying(false); setConfirmed(true); }, 1800);
+  };
+
+  return (
+    <div className="plan-confirm-overlay" onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div className="plan-confirm-modal">
+        {confirmed ? (
+          <div className="pcm-success">
+            {confettiPieces.map((s,i)=>(
+              <div key={i} className="pcm-confetti" style={{...s, position:"absolute", animation:`confettiBurst ${0.7+Math.random()*0.6}s ${i*0.03}s ease-out both`}}/>
+            ))}
+            <div className="pcm-success-ring-wrap">
+              <div className="pcm-success-ring">
+                <span className="pcm-success-check">✅</span>
+              </div>
+              <div className="pcm-success-ring-pulse"/>
+            </div>
+            <div className="pcm-success-title">You're on {plan.name}!</div>
+            <div className="pcm-success-sub">Your payment was processed successfully. All premium features are now unlocked and ready to use.</div>
+            <div className="pcm-success-stats">
+              {[
+                [plan.name,"Plan"],
+                [annual?"Annual":"Monthly","Billing"],
+                ["Active","Status"],
+              ].map(([v,l],i)=>(
+                <div key={i} className="pcm-stat">
+                  <strong>{v}</strong>
+                  <span>{l}</span>
+                </div>
+              ))}
+            </div>
+            <button className="pcm-success-btn" onClick={onSuccess}>Start Using {plan.name} →</button>
+          </div>
+        ) : (
+          <div className="pcm-grid">
+            {/* Left dark panel */}
+            <div className="pcm-left">
+              <div className="pcm-badge">✦ Secure Checkout</div>
+              <div className="pcm-title">Upgrade to<br/><em style={{fontStyle:"italic",color:"var(--violet-light)"}}>{plan.name}</em></div>
+              <div className="pcm-sub">Unlock all features instantly. Cancel anytime — no hidden fees, no long-term contracts.</div>
+              <div className="pcm-summary">
+                <div className="pcm-row"><span>Plan</span><strong>{plan.name} — {annual?"Annual":"Monthly"}</strong></div>
+                <div className="pcm-row"><span>Billing</span><strong>{annual?"Billed annually":"Month-to-month"}</strong></div>
+                {annual&&<div className="pcm-row"><span>Savings</span><strong style={{color:"#00c9a7"}}>Save 25% vs monthly</strong></div>}
+                <div className="pcm-row total"><span>Total today</span><strong style={{fontSize:"1.05rem"}}>${price}{annual?"/yr":"/mo"}</strong></div>
+              </div>
+              <div className="pcm-secure-note">🔒 256-bit SSL · PCI-DSS compliant · Instant activation</div>
+            </div>
+
+            {/* Right form panel */}
+            <div className="pcm-right">
+              <div className="pcm-right-title">Complete Payment</div>
+              <div className="pcm-right-sub">Choose your preferred payment method</div>
+
+              {/* Method tabs */}
+              <div className="pay-method-tabs">
+                {[
+                  {key:"card",  icon:"💳", label:"Card"},
+                  {key:"upi",   icon:"📲", label:"UPI"},
+                  {key:"bank",  icon:"🏦", label:"Net Banking"},
+                ].map(t=>(
+                  <button key={t.key} className={`pay-method-tab${tab===t.key?" active":""}`} onClick={()=>setTab(t.key)}>
+                    <span className="pay-method-tab-icon">{t.icon}</span>{t.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Card panel */}
+              {tab==="card"&&(
+                <div className="card-panel">
+                  <div className="card-visual">
+                    <div className="card-chip">💳</div>
+                    <div className="card-number">•••• •••• •••• ••••</div>
+                    <div className="card-row">
+                      <div><div style={{marginBottom:"2px"}}>Card Holder</div><div style={{fontWeight:700,fontSize:"0.82rem"}}>Your Name</div></div>
+                      <div><div style={{marginBottom:"2px"}}>Expires</div><div style={{fontWeight:700,fontSize:"0.82rem"}}>MM / YY</div></div>
+                    </div>
+                  </div>
+                  <div className="pay-form-grid">
+                    <div className="pay-field full"><label>Card Number</label><input placeholder="1234 5678 9012 3456" maxLength={19}/></div>
+                    <div className="pay-field"><label>Expiry</label><input placeholder="MM / YY" maxLength={7}/></div>
+                    <div className="pay-field"><label>CVV</label><input placeholder="•••" type="password" maxLength={4}/></div>
+                    <div className="pay-field full"><label>Name on Card</label><input placeholder="As printed on card"/></div>
+                  </div>
+                </div>
+              )}
+
+              {/* UPI panel */}
+              {tab==="upi"&&(
+                <div className="upi-panel">
+                  <div className="upi-logo-row">
+                    {UPI_APPS.map((u,i)=>(
+                      <div key={i} className={`upi-app${selectedUpi===i?" selected":""}`} onClick={()=>setSelectedUpi(i)}>
+                        <div className="upi-icon">{u.icon}</div>
+                        <div className="upi-label">{u.label}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{fontSize:"0.78rem",color:"var(--muted)",marginBottom:"0.85rem",textAlign:"center"}}>or enter your UPI ID</div>
+                  <div className="upi-id-wrap">
+                    <span className="upi-id-prefix">@</span>
+                    <input className="upi-id-input" placeholder="yourname@upi"/>
+                  </div>
+                  <button className="upi-verify-btn" style={{marginBottom:"0.75rem"}}>💬 Verify & Generate Request</button>
+                </div>
+              )}
+
+              {/* Net Banking panel */}
+              {tab==="bank"&&(
+                <div className="bank-panel">
+                  <div className="bank-list">
+                    {BANKS.map((b,i)=>(
+                      <div key={i} className={`bank-item${selectedBank===i?" selected":""}`} onClick={()=>setSelectedBank(i)}>
+                        <div className="bank-logo" style={{background:b.bg,color:b.color}}>{b.abbr}</div>
+                        <div style={{flex:1}}>
+                          <div className="bank-name">{b.name}</div>
+                          <div className="bank-type">{b.type}</div>
+                        </div>
+                        <div className="bank-check">{selectedBank===i&&"✓"}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{fontSize:"0.75rem",color:"var(--muted)"}}>You'll be redirected to your bank's secure page to complete the transaction.</div>
+                </div>
+              )}
+
+              <div className="pcm-actions">
+                <button className="pcm-btn-cancel" onClick={onClose}>Cancel</button>
+                <button className="pcm-btn-pay" onClick={handlePay} disabled={paying}>
+                  {paying
+                    ? <span style={{display:"flex",alignItems:"center",justifyContent:"center",gap:"8px"}}>
+                        <span style={{display:"inline-block",width:"14px",height:"14px",border:"2px solid rgba(255,255,255,0.4)",borderTopColor:"#fff",borderRadius:"50%",animation:"spin 0.7s linear infinite"}}/>
+                        Processing…
+                      </span>
+                    : `Pay $${price} ${annual?"/yr":"/mo"} →`
+                  }
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── PAGES ────────────────────────────────────────────────────────────────
 function HomePage({onJobClick,onNav,savedJobs,onSave}){
   return (
-    <>
+    <div className="page-stage">
       <div className="hero">
         <div className="hero-mesh"/><div className="hero-grid"/>
         <div className="hero-inner">
@@ -954,11 +1328,12 @@ function HomePage({onJobClick,onNav,savedJobs,onSave}){
           ))}
         </div>
       </div>
+
       <div className="section">
         <div className="sec-head"><div><div className="sec-title">Browse by <em>Category</em></div><div className="sec-sub">Explore roles across every discipline</div></div></div>
         <div className="cat-grid">
-          {CATEGORIES.map(c=>(
-            <div key={c.label} className="cat-card fade-in" onClick={()=>onNav("listings")}>
+          {CATEGORIES.map((c,i)=>(
+            <div key={c.label} className="cat-card fade-in" style={{animationDelay:`${i*0.05}s`}} onClick={()=>onNav("listings")}>
               <span className="cat-icon">{c.icon}</span>
               <div className="cat-label">{c.label}</div>
               <div className="cat-count">{c.count} jobs</div>
@@ -966,7 +1341,9 @@ function HomePage({onJobClick,onNav,savedJobs,onSave}){
           ))}
         </div>
       </div>
+
       <hr className="divider"/>
+
       <div className="section">
         <div className="sec-head">
           <div><div className="sec-title"><em>Featured</em> Opportunities</div><div className="sec-sub">Hand-picked roles updated daily</div></div>
@@ -974,11 +1351,11 @@ function HomePage({onJobClick,onNav,savedJobs,onSave}){
         </div>
         <div className="jobs-grid">
           {JOBS.filter(j=>j.featured).map((job,i)=>(
-            <JobCard key={job.id} job={job} saved={savedJobs.includes(job.id)} onSave={onSave} onClick={onJobClick} delay={i*0.08}/>
+            <JobCard key={job.id} job={job} saved={savedJobs.includes(job.id)} onSave={onSave} onClick={onJobClick} delay={i*0.1} premium={i===0}/>
           ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -1062,25 +1439,27 @@ function JobDetailPage({job,savedJobs,onSave,onApply,onCompanyClick}){
 
 function CompaniesPage({onCompanyClick}){
   return (
-    <div className="section">
-      <div className="sec-head"><div><div className="sec-title">Top Companies <em>Hiring Now</em></div><div className="sec-sub">Explore culture, mission and open roles</div></div></div>
-      <div className="co-grid">
-        {COMPANIES.map((co,i)=>(
-          <div key={co.id} className="co-card" style={{animationDelay:`${i*0.07}s`}} onClick={()=>onCompanyClick(co)}>
-            <div className="co-banner" style={{background:co.bannerBg}}>
-              <img src={BANNER_IMGS[co.id]} alt="" className="co-banner-bg" onError={e=>e.target.style.display="none"}/>
-              <div className="co-banner-overlay"/>
-            </div>
-            <div className="co-body">
-              <div className="co-header-row">
-                <CoLogo companyId={co.id} fallback={co.logo} color={co.color} bg={co.bg} size={46} radius={11}/>
-                <div style={{marginTop:"0.2rem"}}><div className="co-name">{co.name}</div><div className="co-ind">{co.industry}</div></div>
+    <div className="page-stage">
+      <div className="section">
+        <div className="sec-head"><div><div className="sec-title">Top Companies <em>Hiring Now</em></div><div className="sec-sub">Explore culture, mission and open roles</div></div></div>
+        <div className="co-grid">
+          {COMPANIES.map((co,i)=>(
+            <div key={co.id} className="co-card" style={{animationDelay:`${i*0.07}s`}} onClick={()=>onCompanyClick(co)}>
+              <div className="co-banner" style={{background:co.bannerBg}}>
+                <img src={BANNER_IMGS[co.id]} alt="" className="co-banner-bg" onError={e=>e.target.style.display="none"}/>
+                <div className="co-banner-overlay"/>
               </div>
-              <div className="co-desc">{co.about.slice(0,112)}…</div>
-              <div className="co-foot"><span className="roles-badge">{co.openRoles} open roles</span><span className="co-size-txt">{co.size} emp.</span></div>
+              <div className="co-body">
+                <div className="co-header-row">
+                  <CoLogo companyId={co.id} fallback={co.logo} color={co.color} bg={co.bg} size={46} radius={11}/>
+                  <div style={{marginTop:"0.2rem"}}><div className="co-name">{co.name}</div><div className="co-ind">{co.industry}</div></div>
+                </div>
+                <div className="co-desc">{co.about.slice(0,112)}…</div>
+                <div className="co-foot"><span className="roles-badge">{co.openRoles} open roles</span><span className="co-size-txt">{co.size} emp.</span></div>
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -1116,18 +1495,13 @@ function CompanyDetailPage({company,jobs,onJobClick}){
   );
 }
 
-// ═══════════════════════════════════════════
-// PREMIUM RESUME PAGE
-// ═══════════════════════════════════════════
 function ResumePage({onUploadDone}){
   const [file,setFile]=useState(null);
   const [progress,setProgress]=useState(0);
-  const [stage,setStage]=useState(0); // 0=idle,1=uploading,2=done
+  const [stage,setStage]=useState(0);
   const [drag,setDrag]=useState(false);
   const fileRef=useRef();
-
   const STAGES=["Uploading","Parsing","Analysing","Indexing"];
-
   const handleFile=(f)=>{
     if(!f)return;
     setFile({name:f.name,size:(f.size/1024).toFixed(0)+" KB"});
@@ -1135,103 +1509,57 @@ function ResumePage({onUploadDone}){
     let p=0;
     const iv=setInterval(()=>{
       p+=Math.random()*14+6;
-      if(p>=100){
-        clearInterval(iv);
-        setProgress(100);
-        setTimeout(()=>{setStage(2); onUploadDone(f.name);},400);
-      } else {
-        setProgress(Math.min(Math.round(p),99));
-      }
+      if(p>=100){clearInterval(iv);setProgress(100);setTimeout(()=>{setStage(2);onUploadDone(f.name);},400);}
+      else setProgress(Math.min(Math.round(p),99));
     },200);
   };
-
   const currentStage=stage===1?Math.floor(progress/25):4;
-
   return (
     <div className="resume-wrap">
       <div className="pg-h2 fade-in">Upload Your Resume</div>
       <p className="pg-sub fade-in-1">Let employers find you. Upload once — apply everywhere with one click.</p>
-
-      {/* Stage 0: Drop zone */}
       {stage===0&&(
-        <div className={`upload-stage fade-in-2${drag?" drag":""}`}
-          onDragOver={e=>{e.preventDefault();setDrag(true);}}
-          onDragLeave={()=>setDrag(false)}
-          onDrop={e=>{e.preventDefault();setDrag(false);handleFile(e.dataTransfer.files[0]);}}
-          onClick={()=>fileRef.current.click()}>
+        <div className={`upload-stage fade-in-2${drag?" drag":""}`} onDragOver={e=>{e.preventDefault();setDrag(true);}} onDragLeave={()=>setDrag(false)} onDrop={e=>{e.preventDefault();setDrag(false);handleFile(e.dataTransfer.files[0]);}} onClick={()=>fileRef.current.click()}>
           <input ref={fileRef} type="file" accept=".pdf,.doc,.docx" style={{display:"none"}} onChange={e=>handleFile(e.target.files[0])}/>
-          <div className="upload-bg-mesh"/>
-          <div className="upload-orb upload-orb-1"/>
-          <div className="upload-orb upload-orb-2"/>
-          <div className="upload-grid-lines"/>
-          <div className="upload-scan-line"/>
+          <div className="upload-bg-mesh"/><div className="upload-orb upload-orb-1"/><div className="upload-orb upload-orb-2"/><div className="upload-grid-lines"/><div className="upload-scan-line"/>
           <div className="upload-content">
-            <div className="upload-icon-wrap">
-              <div className="upload-icon-ring">
-                <span className="upload-icon-inner">📄</span>
-              </div>
-            </div>
+            <div className="upload-icon-wrap"><div className="upload-icon-ring"><span className="upload-icon-inner">📄</span></div></div>
             <div className="upload-title">{drag?"Drop it here!":"Drag & Drop Your Resume"}</div>
             <div className="upload-hint" style={{marginBottom:"0.6rem"}}>or click to browse your files</div>
-            <div className="upload-formats">
-              {["PDF","DOC","DOCX"].map(f=><span key={f} className="upload-fmt-badge">{f}</span>)}
-              <span className="upload-fmt-badge">Max 5MB</span>
-            </div>
+            <div className="upload-formats">{["PDF","DOC","DOCX"].map(f=><span key={f} className="upload-fmt-badge">{f}</span>)}<span className="upload-fmt-badge">Max 5MB</span></div>
           </div>
         </div>
       )}
-
-      {/* Stage 1: Uploading */}
       {stage===1&&(
         <div className="upload-progress-stage">
           <div className="up-file-row">
             <div className="up-file-icon">📎</div>
-            <div style={{flex:1}}>
-              <div className="up-file-name">{file?.name}</div>
-              <div className="up-file-size">{file?.size}</div>
-            </div>
+            <div style={{flex:1}}><div className="up-file-name">{file?.name}</div><div className="up-file-size">{file?.size}</div></div>
             <div style={{fontFamily:"var(--display)",fontWeight:700,fontSize:"1.2rem",color:"var(--violet-light)"}}>{progress}%</div>
           </div>
-          <div className="up-prog-bar">
-            <div className="up-prog-fill" style={{width:`${progress}%`}}/>
-          </div>
+          <div className="up-prog-bar"><div className="up-prog-fill" style={{width:`${progress}%`}}/></div>
           <div className="up-prog-labels"><span>Processing…</span><span style={{color:"var(--violet-light)"}}>AI-powered scan</span></div>
-          <div className="up-stages">
-            {STAGES.map((s,i)=>(
-              <div key={s} className={`up-stage-pill${i===currentStage?" active":i<currentStage?" done":""}`}>
-                <span className="up-stage-dot"/>
-                {i<currentStage?"✓ ":""}{s}
-              </div>
-            ))}
-          </div>
+          <div className="up-stages">{STAGES.map((s,i)=><div key={s} className={`up-stage-pill${i===currentStage?" active":i<currentStage?" done":""}`}><span className="up-stage-dot"/>{i<currentStage?"✓ ":""}{s}</div>)}</div>
         </div>
       )}
-
-      {/* Stage 2: Done */}
       {stage===2&&(
         <div className="upload-success">
           <div className="up-success-icon">✅</div>
           <div className="up-success-title">Resume is Live!</div>
           <div className="up-success-sub">{file?.name} · AI-parsed · Profile updated</div>
-          <div className="up-success-chips">
-            <span className="up-chip up-chip-green">✓ Recruiter visible</span>
-            <span className="up-chip up-chip-green">✓ Skills extracted</span>
-            <span className="up-chip">72% profile strength</span>
-            <span className="up-chip">14 matches found</span>
-          </div>
+          <div className="up-success-chips"><span className="up-chip up-chip-green">✓ Recruiter visible</span><span className="up-chip up-chip-green">✓ Skills extracted</span><span className="up-chip">72% profile strength</span><span className="up-chip">14 matches found</span></div>
           <button className="up-change-btn" onClick={()=>{setStage(0);setFile(null);}}>Upload a different file</button>
         </div>
       )}
-
       <div className="resume-form fade-in-3">
         <div className="rf-title">Profile Details</div>
         <div className="fgrid">
           <div className="fg2"><label>First Name</label><input placeholder="Jane"/></div>
           <div className="fg2"><label>Last Name</label><input placeholder="Smith"/></div>
           <div className="fg2"><label>Email</label><input type="email" placeholder="jane@example.com"/></div>
-          <div className="fg2"><label>Phone</label><input placeholder="+1 (555) 000-0000"/></div>
+          <div className="fg2"><label>Phone</label><input placeholder="+91 98765 43210"/></div>
           <div className="fg2"><label>Current Role</label><input placeholder="Senior Designer"/></div>
-          <div className="fg2"><label>Desired Salary</label><input placeholder="$120,000"/></div>
+          <div className="fg2"><label>Desired Salary</label><input placeholder="₹25,00,000"/></div>
           <div className="fg2 fcol2"><label>Brief Bio</label><textarea placeholder="A short intro about yourself, your background, and what you're looking for…"/></div>
           <div className="fg2"><label>LinkedIn</label><input placeholder="linkedin.com/in/janesmith"/></div>
           <div className="fg2"><label>Portfolio</label><input placeholder="janesmith.com"/></div>
@@ -1246,7 +1574,7 @@ function SavedPage({savedJobs,jobs,onJobClick,onSave}){
   const saved=jobs.filter(j=>savedJobs.includes(j.id));
   if(!saved.length) return <div className="empty-state"><span className="empty-icon">♡</span><h3>No saved jobs yet</h3><p>Bookmark roles — they'll appear here.</p></div>;
   return (
-    <div className="section">
+    <div className="section page-stage">
       <div className="sec-head"><div><div className="sec-title"><em>Saved</em> Jobs</div><div className="sec-sub">{saved.length} job{saved.length!==1?"s":""} bookmarked</div></div></div>
       <div className="jobs-grid">{saved.map((job,i)=><JobCard key={job.id} job={job} saved onSave={onSave} onClick={onJobClick} delay={i*0.07}/>)}</div>
     </div>
@@ -1295,16 +1623,11 @@ function ContactPage({onToast}){
   );
 }
 
-// ═══════════════════════════════════════════
-// SOCIAL PAGE — REAL LINKS + ADS BANNER
-// ═══════════════════════════════════════════
 function SocialPage({onToast}){
   return (
     <div className="social-wrap">
       <div className="pg-h2 fade-in">Connect with Us</div>
       <p className="pg-sub fade-in-1">Follow us across platforms for job drops, career tips, and exclusive community updates.</p>
-
-      {/* Ads / Promote banner */}
       <div className="social-ads-banner fade-in">
         <div className="ads-badge">⚡ Advertise with Us</div>
         <div className="ads-title">Reach 200K+ active job seekers</div>
@@ -1317,8 +1640,6 @@ function SocialPage({onToast}){
         </div>
         <button className="ads-cta" onClick={()=>onToast("📣 Our ads team will be in touch soon!")}>Get Media Kit →</button>
       </div>
-
-      {/* Social cards with real links */}
       <div className="social-grid">
         {SOCIALS.map((s,i)=>(
           <a key={s.name} className="social-card" href={s.url} target="_blank" rel="noopener noreferrer"
@@ -1335,7 +1656,6 @@ function SocialPage({onToast}){
           </a>
         ))}
       </div>
-
       <div className="social-newsletter fade-in-2">
         <div style={{fontSize:"2rem",marginBottom:"0.5rem"}}>📬</div>
         <div className="nl-title">Weekly Job Digest</div>
@@ -1345,7 +1665,6 @@ function SocialPage({onToast}){
           <button className="nl-btn" onClick={()=>onToast("🎉 Subscribed to weekly digest!")}>Subscribe</button>
         </div>
       </div>
-
       <div className="community-strip fade-in-3">
         {[["48.2K","Twitter Followers"],["112K","LinkedIn Connections"],["14.9K","Discord Members"],["6.1K","GitHub Stars"]].map(([n,l])=>(
           <div key={l} className="comm-item"><span className="comm-num">{n}</span><span className="comm-label">{l}</span></div>
@@ -1355,114 +1674,53 @@ function SocialPage({onToast}){
   );
 }
 
-// ═══════════════════════════════════════════
-// PLANS / SUBSCRIPTIONS PAGE
-// ═══════════════════════════════════════════
 function PlansPage({onToast}){
   const [billing,setBilling]=useState("annual");
   const [faqOpen,setFaqOpen]=useState(null);
+  const [confirmPlan,setConfirmPlan]=useState(null);
 
-  const prices={
-    free:{monthly:0,annual:0},
-    pro:{monthly:19,annual:14},
-    elite:{monthly:39,annual:29},
-    recruiter:{monthly:99,annual:74},
-  };
-
-  const pr=(tier)=>{
-    const p=prices[tier][billing];
-    return p===0?"Free":`$${p}`;
-  };
+  const prices={free:{monthly:0,annual:0},pro:{monthly:19,annual:14},elite:{monthly:39,annual:29},recruiter:{monthly:99,annual:74}};
+  const pr=(tier)=>prices[tier][billing];
 
   const PLANS=[
-    {
-      key:"free", tier:"Starter", name:"Free", featured:false,
-      desc:"Everything you need to start your job search journey.",
-      btnLabel:"Get Started", btnClass:"plan-btn-outline",
-      features:[
-        {yes:true,text:"Browse all 8,400+ job listings"},
-        {yes:true,text:"Save up to 5 jobs"},
-        {yes:true,text:"Basic profile & resume upload"},
-        {yes:true,text:"Email job alerts (weekly)"},
-        {yes:false,text:"Priority application badge",dimmed:true},
-        {yes:false,text:"Recruiter profile visibility",dimmed:true},
-        {yes:false,text:"AI resume match score",dimmed:true},
-        {yes:false,text:"Salary insights & benchmarks",dimmed:true},
-      ],
-    },
-    {
-      key:"pro", tier:"Most Popular", name:"Pro", featured:true,
-      desc:"Accelerate your search with AI-powered tools and priority access.",
-      btnLabel:"Start Free Trial", btnClass:"plan-btn-primary",
-      features:[
-        {yes:true,text:"Everything in Free"},
-        {yes:true,text:"Unlimited saved jobs"},
-        {yes:true,text:"Priority application badge"},
-        {yes:true,text:"Recruiter profile visibility"},
-        {yes:true,text:"AI resume match score"},
-        {yes:true,text:"Daily email & SMS alerts"},
-        {yes:false,text:"1-click apply to all jobs",dimmed:true},
-        {yes:false,text:"Dedicated career coach",dimmed:true},
-      ],
-    },
-    {
-      key:"elite", tier:"Power User", name:"Elite", featured:false,
-      desc:"The complete career toolkit for serious professionals.",
-      btnLabel:"Go Elite", btnClass:"plan-btn-outline",
-      features:[
-        {yes:true,text:"Everything in Pro"},
-        {yes:true,text:"1-click apply to all jobs"},
-        {yes:true,text:"Salary insights & benchmarks"},
-        {yes:true,text:"Application tracker dashboard"},
-        {yes:true,text:"Interview prep resources"},
-        {yes:true,text:"LinkedIn profile optimizer"},
-        {yes:true,text:"Dedicated career coach (monthly)"},
-        {yes:false,text:"Custom talent branding",dimmed:true},
-      ],
-    },
-    {
-      key:"recruiter", tier:"For Teams", name:"Recruiter", featured:false,
-      desc:"Post jobs, search candidates, and manage pipelines at scale.",
-      btnLabel:"Start Hiring", btnClass:"plan-btn-gold",
-      features:[
-        {yes:true,text:"Post unlimited job listings"},
-        {yes:true,text:"Full candidate database access"},
-        {yes:true,text:"Advanced search & filters"},
-        {yes:true,text:"Branded company page"},
-        {yes:true,text:"ATS integrations (Greenhouse, Lever)"},
-        {yes:true,text:"Analytics & performance reports"},
-        {yes:true,text:"Dedicated account manager"},
-        {yes:true,text:"Custom talent branding"},
-      ],
-    },
+    { key:"free", tier:"Starter", name:"Free", featured:false, desc:"Everything you need to start your job search journey.", btnLabel:"Get Started", btnClass:"plan-btn-outline",
+      features:[{yes:true,text:"Browse all 8,400+ job listings"},{yes:true,text:"Save up to 5 jobs"},{yes:true,text:"Basic profile & resume upload"},{yes:true,text:"Email job alerts (weekly)"},{yes:false,text:"Priority application badge",dimmed:true},{yes:false,text:"Recruiter profile visibility",dimmed:true},{yes:false,text:"AI resume match score",dimmed:true},{yes:false,text:"Salary insights & benchmarks",dimmed:true}] },
+    { key:"pro", tier:"Most Popular", name:"Pro", featured:true, desc:"Accelerate your search with AI-powered tools and priority access.", btnLabel:"Start Free Trial", btnClass:"plan-btn-primary",
+      features:[{yes:true,text:"Everything in Free"},{yes:true,text:"Unlimited saved jobs"},{yes:true,text:"Priority application badge"},{yes:true,text:"Recruiter profile visibility"},{yes:true,text:"AI resume match score"},{yes:true,text:"Daily email & SMS alerts"},{yes:false,text:"1-click apply to all jobs",dimmed:true},{yes:false,text:"Dedicated career coach",dimmed:true}] },
+    { key:"elite", tier:"Power User", name:"Elite", featured:false, desc:"The complete career toolkit for serious professionals.", btnLabel:"Go Elite", btnClass:"plan-btn-outline",
+      features:[{yes:true,text:"Everything in Pro"},{yes:true,text:"1-click apply to all jobs"},{yes:true,text:"Salary insights & benchmarks"},{yes:true,text:"Application tracker dashboard"},{yes:true,text:"Interview prep resources"},{yes:true,text:"LinkedIn profile optimizer"},{yes:true,text:"Dedicated career coach (monthly)"},{yes:false,text:"Custom talent branding",dimmed:true}] },
+    { key:"recruiter", tier:"For Teams", name:"Recruiter", featured:false, desc:"Post jobs, search candidates, and manage pipelines at scale.", btnLabel:"Start Hiring", btnClass:"plan-btn-gold",
+      features:[{yes:true,text:"Post unlimited job listings"},{yes:true,text:"Full candidate database access"},{yes:true,text:"Advanced search & filters"},{yes:true,text:"Branded company page"},{yes:true,text:"ATS integrations (Greenhouse, Lever)"},{yes:true,text:"Analytics & performance reports"},{yes:true,text:"Dedicated account manager"},{yes:true,text:"Custom talent branding"}] },
   ];
 
   const COMPARE_ROWS=[
-    {feat:"Job listings access", free:"Limited",pro:"All 8,400+",elite:"All 8,400+",recruiter:"Post + browse"},
-    {feat:"Saved jobs", free:"5",pro:"Unlimited",elite:"Unlimited",recruiter:"N/A"},
-    {feat:"AI resume match", free:false,pro:true,elite:true,recruiter:true},
-    {feat:"Priority badge", free:false,pro:true,elite:true,recruiter:false},
-    {feat:"1-click apply", free:false,pro:false,elite:true,recruiter:false},
-    {feat:"Job alerts", free:"Weekly",pro:"Daily",elite:"Instant",recruiter:"N/A"},
-    {feat:"Salary insights", free:false,pro:false,elite:true,recruiter:true},
-    {feat:"Interview prep", free:false,pro:false,elite:true,recruiter:false},
-    {feat:"Job post credits", free:false,pro:false,elite:false,recruiter:"Unlimited"},
-    {feat:"Candidate search", free:false,pro:false,elite:false,recruiter:true},
-    {feat:"ATS integration", free:false,pro:false,elite:false,recruiter:true},
-    {feat:"Account manager", free:false,pro:false,elite:false,recruiter:true},
+    {feat:"Job listings access",free:"Limited",pro:"All 8,400+",elite:"All 8,400+",recruiter:"Post + browse"},
+    {feat:"Saved jobs",free:"5",pro:"Unlimited",elite:"Unlimited",recruiter:"N/A"},
+    {feat:"AI resume match",free:false,pro:true,elite:true,recruiter:true},
+    {feat:"Priority badge",free:false,pro:true,elite:true,recruiter:false},
+    {feat:"1-click apply",free:false,pro:false,elite:true,recruiter:false},
+    {feat:"Job alerts",free:"Weekly",pro:"Daily",elite:"Instant",recruiter:"N/A"},
+    {feat:"Salary insights",free:false,pro:false,elite:true,recruiter:true},
+    {feat:"Interview prep",free:false,pro:false,elite:true,recruiter:false},
+    {feat:"Job post credits",free:false,pro:false,elite:false,recruiter:"Unlimited"},
+    {feat:"Candidate search",free:false,pro:false,elite:false,recruiter:true},
+    {feat:"ATS integration",free:false,pro:false,elite:false,recruiter:true},
+    {feat:"Account manager",free:false,pro:false,elite:false,recruiter:true},
   ];
 
   const FAQS=[
     {q:"Can I cancel anytime?",a:"Yes — no lock-ins, no cancellation fees. Cancel anytime from your account settings and you'll retain access until the end of your billing period."},
     {q:"Is there a free trial for Pro?",a:"Absolutely! Pro comes with a 14-day free trial, no credit card required. Explore all features risk-free before committing."},
-    {q:"How does the AI resume match work?",a:"Our AI analyses your resume against each job posting, scoring your fit across 12 dimensions including skills, experience, location and salary alignment. You see a match percentage on every listing."},
+    {q:"How does the AI resume match work?",a:"Our AI analyses your resume against each job posting, scoring your fit across 12 dimensions including skills, experience, location and salary alignment."},
     {q:"Can I switch plans mid-cycle?",a:"Yes. Upgrades are prorated and effective immediately. Downgrades take effect at the start of your next billing cycle."},
-    {q:"What payment methods do you accept?",a:"We accept all major credit cards (Visa, Mastercard, Amex), PayPal, and bank transfers for annual Recruiter plans."},
+    {q:"What payment methods do you accept?",a:"We accept all major credit/debit cards (Visa, Mastercard, Amex), UPI (PhonePe, GPay, Paytm, BHIM), and Net Banking for all major Indian banks."},
     {q:"Do you offer discounts for students or non-profits?",a:"Yes! Students with a valid .edu email get 50% off Pro. Non-profits get 30% off all plans. Contact us to apply."},
   ];
 
-  const isVal=(v)=>v===true;
-  const isFalse=(v)=>v===false;
+  const handlePlanClick=(plan)=>{
+    if(plan.key==="free"){ onToast("🚀 You're on the Free plan!"); return; }
+    setConfirmPlan(plan);
+  };
 
   return (
     <div className="plans-wrap">
@@ -1487,14 +1745,12 @@ function PlansPage({onToast}){
             <div className="plan-name">{plan.name}</div>
             <div className="plan-desc">{plan.desc}</div>
             <div className="plan-price-row">
-              {prices[plan.key][billing]>0&&<span className="plan-currency">$</span>}
-              <span className="plan-amount">{prices[plan.key][billing]===0?"Free":prices[plan.key][billing]}</span>
-              {prices[plan.key][billing]>0&&<span className="plan-period">/mo</span>}
+              {pr(plan.key)>0&&<span className="plan-currency">$</span>}
+              <span className="plan-amount">{pr(plan.key)===0?"Free":pr(plan.key)}</span>
+              {pr(plan.key)>0&&<span className="plan-period">/mo</span>}
             </div>
-            {prices[plan.key][billing]>0&&billing==="annual"&&(
-              <div className="plan-annual-note">Billed ${prices[plan.key][billing]*12}/yr · Save ${(prices[plan.key].monthly-prices[plan.key].annual)*12}/yr</div>
-            )}
-            {prices[plan.key][billing]===0&&<div className="plan-annual-note" style={{visibility:"hidden"}}>placeholder</div>}
+            {pr(plan.key)>0&&billing==="annual"&&<div className="plan-annual-note">Billed ${pr(plan.key)*12}/yr · Save ${(prices[plan.key].monthly-prices[plan.key].annual)*12}/yr</div>}
+            {pr(plan.key)===0&&<div className="plan-annual-note" style={{visibility:"hidden"}}>_</div>}
             <hr className="plan-divider"/>
             <ul className="plan-features">
               {plan.features.map((f,j)=>(
@@ -1504,40 +1760,23 @@ function PlansPage({onToast}){
                 </li>
               ))}
             </ul>
-            <button className={`plan-btn ${plan.btnClass}`}
-              onClick={()=>onToast(`🚀 Starting ${plan.name} plan${plan.key==="free"?"":` — ${pr(plan.key)}/mo`}`)}>
-              {plan.btnLabel}
-            </button>
+            <button className={`plan-btn ${plan.btnClass}`} onClick={()=>handlePlanClick(plan)}>{plan.btnLabel}</button>
           </div>
         ))}
       </div>
 
-      {/* Feature comparison table */}
       <div className="plans-compare fade-in-2">
         <div className="compare-head"><h3>Full Feature Comparison</h3></div>
         <div style={{overflowX:"auto"}}>
           <table className="compare-table">
-            <thead>
-              <tr>
-                <th style={{width:"34%"}}>Feature</th>
-                <th>Free</th>
-                <th className="ct-feat-col">Pro</th>
-                <th>Elite</th>
-                <th>Recruiter</th>
-              </tr>
-            </thead>
+            <thead><tr><th style={{width:"34%"}}>Feature</th><th>Free</th><th className="ct-feat-col">Pro</th><th>Elite</th><th>Recruiter</th></tr></thead>
             <tbody>
               {COMPARE_ROWS.map((row,i)=>(
                 <tr key={i}>
                   <td style={{fontWeight:500}}>{row.feat}</td>
                   {["free","pro","elite","recruiter"].map(k=>(
                     <td key={k} className={k==="pro"?"ct-feat-col":""}>
-                      {isVal(row[k])
-                        ?<span className="ct-check">✓</span>
-                        :isFalse(row[k])
-                          ?<span className="ct-x">—</span>
-                          :<span style={{fontSize:"0.8rem",color:"var(--muted)"}}>{row[k]}</span>
-                      }
+                      {row[k]===true?<span className="ct-check">✓</span>:row[k]===false?<span className="ct-x">—</span>:<span style={{fontSize:"0.8rem",color:"var(--muted)"}}>{row[k]}</span>}
                     </td>
                   ))}
                 </tr>
@@ -1547,7 +1786,6 @@ function PlansPage({onToast}){
         </div>
       </div>
 
-      {/* FAQ */}
       <div className="plans-faq fade-in-3">
         <div className="faq-title">Frequently Asked Questions</div>
         {FAQS.map((f,i)=>(
@@ -1561,7 +1799,6 @@ function PlansPage({onToast}){
         ))}
       </div>
 
-      {/* Enterprise */}
       <div className="enterprise-strip fade-in-4">
         <div className="enterprise-text">
           <h3>Need a custom enterprise plan?</h3>
@@ -1569,6 +1806,17 @@ function PlansPage({onToast}){
         </div>
         <button className="enterprise-btn" onClick={()=>onToast("📞 Our enterprise team will reach out within 24h!")}>Talk to Sales →</button>
       </div>
+
+      {/* ── PREMIUM CONFIRMATION MODAL ── */}
+      {confirmPlan&&(
+        <PlanConfirmModal
+          plan={confirmPlan}
+          billing={billing}
+          price={billing==="annual"?pr(confirmPlan.key)*12:pr(confirmPlan.key)}
+          onClose={()=>setConfirmPlan(null)}
+          onSuccess={()=>{setConfirmPlan(null);onToast(`🎉 Welcome to ${confirmPlan.name}! All features unlocked.`);}}
+        />
+      )}
     </div>
   );
 }
@@ -1595,7 +1843,6 @@ export default function App(){
     return ()=>window.removeEventListener("scroll",onScroll);
   },[]);
 
-  // Close notif on outside click
   useEffect(()=>{
     const handler=(e)=>{if(notifRef.current&&!notifRef.current.contains(e.target))setNotifOpen(false);};
     document.addEventListener("mousedown",handler);
@@ -1605,7 +1852,7 @@ export default function App(){
   const showToast=(msg,icon="✓")=>{
     if(toastRef.current)clearTimeout(toastRef.current);
     setToast({msg,icon});
-    toastRef.current=setTimeout(()=>setToast(null),3500);
+    toastRef.current=setTimeout(()=>setToast(null),3800);
   };
 
   const toggleSave=(id)=>{
@@ -1618,36 +1865,21 @@ export default function App(){
   const goToCo=(co)=>{setSelCo(co);setSelJob(null);setPage("company");window.scrollTo({top:0,behavior:"smooth"});};
   const nav=(p)=>{setPage(p);setSelJob(null);setSelCo(null);setNotifOpen(false);window.scrollTo({top:0,behavior:"smooth"});};
 
-  const navItems=[
-    {key:"home",label:"Home"},
-    {key:"listings",label:"Jobs"},
-    {key:"companies",label:"Companies"},
-    {key:"social",label:"Community"},
-    {key:"contact",label:"Contact"},
-  ];
-
+  const navItems=[{key:"home",label:"Home"},{key:"listings",label:"Jobs"},{key:"companies",label:"Companies"},{key:"social",label:"Community"},{key:"contact",label:"Contact"}];
   const isListActive=page==="listings"||page==="detail";
 
   return (
     <>
       <style>{css}</style>
+      <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
       <div className="app">
-
-        {/* ── PREMIUM NAVBAR ── */}
         <nav className={`nav${scrolled?" scrolled":""}`}>
-          {/* Logo */}
           <div className="nav-logo" onClick={()=>nav("home")}>
             <div className="logo-mark">
-              <svg viewBox="0 0 18 18" fill="none">
-                <circle cx="6" cy="6" r="4" fill="white" opacity="0.9"/>
-                <circle cx="12" cy="12" r="4" fill="white" opacity="0.6"/>
-                <circle cx="12" cy="6" r="2" fill="white" opacity="0.5"/>
-              </svg>
+              <svg viewBox="0 0 18 18" fill="none"><circle cx="6" cy="6" r="4" fill="white" opacity="0.9"/><circle cx="12" cy="12" r="4" fill="white" opacity="0.6"/><circle cx="12" cy="6" r="2" fill="white" opacity="0.5"/></svg>
             </div>
             <div className="logo-name">Work<em>Board</em></div>
           </div>
-
-          {/* Inline search */}
           <div className="nav-search-wrap">
             <div className="nav-search-inner">
               <span className="nav-search-icon">🔍</span>
@@ -1655,57 +1887,28 @@ export default function App(){
               <span className="nav-search-kbd">⌘K</span>
             </div>
           </div>
-
-          {/* Nav links */}
           <div className="nav-center">
             {navItems.map((item,i)=>(
-              <button key={item.key}
-                className={`nav-item${(item.key==="listings"?isListActive:page===item.key)?" active":""}`}
-                style={{animationDelay:`${0.15+i*0.05}s`}}
-                onClick={()=>nav(item.key)}>
-                {item.label}
-              </button>
+              <button key={item.key} className={`nav-item${(item.key==="listings"?isListActive:page===item.key)?" active":""}`} style={{animationDelay:`${0.15+i*0.05}s`}} onClick={()=>nav(item.key)}>{item.label}</button>
             ))}
           </div>
-
-          {/* Right cluster */}
           <div className="nav-right">
-            {/* Notification bell */}
             <div style={{position:"relative"}} ref={notifRef}>
-              <div className="nav-bell" onClick={()=>setNotifOpen(v=>!v)}>
-                🔔
-                <span className="bell-badge"/>
-                <span className="bell-ring"/>
-              </div>
+              <div className="nav-bell" onClick={()=>setNotifOpen(v=>!v)}>🔔<span className="bell-badge"/><span className="bell-ring"/></div>
               {notifOpen&&(
                 <div className="notif-dropdown">
-                  <div className="notif-header">
-                    <span className="notif-title">Notifications</span>
-                    <button className="notif-clear" onClick={()=>setNotifOpen(false)}>Mark all read</button>
-                  </div>
+                  <div className="notif-header"><span className="notif-title">Notifications</span><button className="notif-clear" onClick={()=>setNotifOpen(false)}>Mark all read</button></div>
                   {NOTIFICATIONS.map((n,i)=>(
                     <div key={i} className="notif-item" onClick={()=>setNotifOpen(false)}>
-                      <div className="notif-dot" style={{background:n.color}}/>
-                      <div><div className="notif-text">{n.text}</div><span className="notif-time">{n.time}</span></div>
+                      <div className="notif-dot" style={{background:n.color}}/><div><div className="notif-text">{n.text}</div><span className="notif-time">{n.time}</span></div>
                     </div>
                   ))}
-                  <div className="notif-footer">
-                    <button className="notif-footer-btn" onClick={()=>setNotifOpen(false)}>View all notifications →</button>
-                  </div>
+                  <div className="notif-footer"><button className="notif-footer-btn" onClick={()=>setNotifOpen(false)}>View all notifications →</button></div>
                 </div>
               )}
             </div>
-
-            {/* Saved pill */}
-            <div className="saved-pill" onClick={()=>nav("saved")}>
-              <div className="saved-count">{savedJobs.length}</div>
-              Saved
-            </div>
-
-            {/* Plans button */}
+            <div className="saved-pill" onClick={()=>nav("saved")}><div className="saved-count">{savedJobs.length}</div>Saved</div>
             <button className="nav-plans-btn" onClick={()=>nav("plans")}>⭐ Plans</button>
-
-            {/* Upload CTA */}
             <button className="nav-cta" onClick={()=>nav("resume")}>Upload Resume</button>
           </div>
         </nav>
@@ -1718,7 +1921,6 @@ export default function App(){
               {page==="company"&&<><button className="bc-btn" onClick={()=>nav("companies")}>Companies</button><span>›</span><span>{selCo?.name}</span></>}
             </div>
           )}
-
           {page==="home"&&<HomePage onJobClick={goToJob} onNav={nav} savedJobs={savedJobs} onSave={toggleSave}/>}
           {page==="listings"&&<ListingsPage onJobClick={goToJob} savedJobs={savedJobs} onSave={toggleSave}/>}
           {page==="detail"&&selJob&&<JobDetailPage job={selJob} savedJobs={savedJobs} onSave={toggleSave} onApply={()=>setApplyModal(selJob)} onCompanyClick={goToCo}/>}
@@ -1731,7 +1933,6 @@ export default function App(){
           {page==="plans"&&<PlansPage onToast={showToast}/>}
         </div>
 
-        {/* Footer */}
         <footer className="footer">
           <div className="footer-inner">
             <div className="footer-top">
@@ -1739,34 +1940,15 @@ export default function App(){
                 <div className="footer-logo">Work<em>Board</em></div>
                 <p>Connecting exceptional talent with companies building the future. No ghost jobs, no spam.</p>
               </div>
-              <div className="footer-links">
-                <h4>Job Seekers</h4>
-                <a onClick={()=>nav("listings")}>Browse Jobs</a>
-                <a onClick={()=>nav("resume")}>Upload Resume</a>
-                <a onClick={()=>nav("saved")}>Saved Jobs</a>
-                <a onClick={()=>nav("plans")}>Pricing Plans</a>
-              </div>
-              <div className="footer-links">
-                <h4>Employers</h4>
-                <a onClick={()=>nav("plans")}>Post a Job</a>
-                <a onClick={()=>nav("contact")}>Contact Sales</a>
-                <a>Talent Search</a>
-                <a>Recruiter Plan</a>
-              </div>
-              <div className="footer-links">
-                <h4>Community</h4>
-                <a onClick={()=>nav("social")}>Social Media</a>
-                <a href="https://discord.com" target="_blank" rel="noopener noreferrer">Discord Server</a>
-                <a onClick={()=>nav("social")}>Newsletter</a>
-                <a>Career Blog</a>
-              </div>
+              <div className="footer-links"><h4>Job Seekers</h4><a onClick={()=>nav("listings")}>Browse Jobs</a><a onClick={()=>nav("resume")}>Upload Resume</a><a onClick={()=>nav("saved")}>Saved Jobs</a><a onClick={()=>nav("plans")}>Pricing Plans</a></div>
+              <div className="footer-links"><h4>Employers</h4><a onClick={()=>nav("plans")}>Post a Job</a><a onClick={()=>nav("contact")}>Contact Sales</a><a>Talent Search</a><a>Recruiter Plan</a></div>
+              <div className="footer-links"><h4>Community</h4><a onClick={()=>nav("social")}>Social Media</a><a href="https://discord.com" target="_blank" rel="noopener noreferrer">Discord Server</a><a onClick={()=>nav("social")}>Newsletter</a><a>Career Blog</a></div>
             </div>
             <div className="footer-bottom">
               <span>© 2026 WorkBoard · Built with intention · All rights reserved</span>
               <div className="footer-socials">
                 {[{i:"𝕏",u:"https://twitter.com"},{i:"in",u:"https://linkedin.com"},{i:"▶",u:"https://youtube.com"},{i:"📸",u:"https://instagram.com"}].map(({i,u},idx)=>(
-                  <a key={idx} className="fsoc" href={u} target="_blank" rel="noopener noreferrer"
-                    onClick={e=>{e.preventDefault();showToast(`Opening…`);setTimeout(()=>window.open(u,"_blank"),250);}}>{i}</a>
+                  <a key={idx} className="fsoc" href={u} target="_blank" rel="noopener noreferrer" onClick={e=>{e.preventDefault();showToast("Opening…");setTimeout(()=>window.open(u,"_blank"),250);}}>{i}</a>
                 ))}
               </div>
             </div>
