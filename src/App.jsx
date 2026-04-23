@@ -79,8 +79,6 @@ const css = `
   @keyframes premiumHalo { 0%,100%{opacity:0.4;transform:scale(1)} 50%{opacity:0.85;transform:scale(1.18)} }
   @keyframes methodPulse { 0%,100%{box-shadow:0 0 0 0 rgba(91,54,242,0.12)} 50%{box-shadow:0 0 0 8px rgba(91,54,242,0)} }
   @keyframes successOrb { 0%{transform:translateY(0) scale(1)} 50%{transform:translateY(-10px) scale(1.04)} 100%{transform:translateY(0) scale(1)} }
-
-  /* ── NEW FEATURED CARD ANIMATIONS ── */
   @keyframes cardFlip3D {
     0%   { opacity:0; transform:perspective(700px) rotateY(-22deg) translateY(32px) scale(0.93); }
     60%  { transform:perspective(700px) rotateY(4deg) translateY(-4px) scale(1.01); }
@@ -112,8 +110,6 @@ const css = `
     65%  { transform:scale(1.12) rotate(4deg); }
     100% { opacity:1; transform:scale(1) rotate(0deg); }
   }
-
-  /* ── PAGE TRANSITION ANIMATIONS ── */
   @keyframes pageSlideUp {
     from { opacity:0; transform:translateY(40px) scale(0.97); }
     to   { opacity:1; transform:translateY(0) scale(1); }
@@ -126,8 +122,6 @@ const css = `
     from { opacity:0; transform:translateY(30px); }
     to   { opacity:1; transform:translateY(0); }
   }
-
-  /* ── PAYMENT CONFIRMATION ANIMATIONS ── */
   @keyframes confirmRingExpand {
     0%   { transform:scale(0.3); opacity:0; }
     50%  { transform:scale(1.18); opacity:1; }
@@ -244,6 +238,46 @@ const css = `
   .nav-cta:hover { transform:translateY(-2px) scale(1.04); box-shadow:0 8px 32px rgba(91,54,242,0.55); }
   .nav-cta:hover::before { opacity:1; }
 
+  /* ── MOBILE MENU ── */
+  .nav-mobile-toggle {
+    display:none; background:none; border:none; color:rgba(255,255,255,0.7);
+    font-size:20px; cursor:pointer; padding:4px; line-height:1;
+  }
+  .nav-mobile-menu {
+    display:none; position:fixed; inset:0; top:68px; z-index:299;
+    background:rgba(4,2,12,0.97); backdrop-filter:blur(24px);
+    flex-direction:column; padding:1.5rem; gap:0.35rem;
+    border-top:1px solid rgba(255,255,255,0.07);
+    overflow-y:auto;
+  }
+  .nav-mobile-menu.open { display:flex; }
+  .nav-mobile-item {
+    background:none; border:none; cursor:pointer;
+    color:rgba(255,255,255,0.55); font-family:var(--sans);
+    font-size:1rem; font-weight:500; padding:0.85rem 1rem;
+    border-radius:12px; text-align:left; transition:all 0.2s;
+  }
+  .nav-mobile-item:hover, .nav-mobile-item.active {
+    background:rgba(91,54,242,0.15); color:#fff;
+  }
+  .nav-mobile-divider {
+    height:1px; background:rgba(255,255,255,0.07); margin:0.5rem 0;
+  }
+  .nav-mobile-actions {
+    display:flex; flex-direction:column; gap:0.65rem; padding-top:0.5rem;
+  }
+  .nav-mobile-cta {
+    background:linear-gradient(135deg,var(--violet),var(--violet-light));
+    color:#fff; border:none; padding:0.85rem; font-family:var(--sans);
+    font-size:0.9rem; font-weight:700; border-radius:var(--r-md); cursor:pointer;
+    text-align:center;
+  }
+  .nav-mobile-plans {
+    background:rgba(245,158,11,0.12); border:1px solid rgba(245,158,11,0.3);
+    color:var(--gold); font-family:var(--sans); font-size:0.88rem; font-weight:700;
+    padding:0.75rem; border-radius:var(--r-md); cursor:pointer; text-align:center;
+  }
+
   /* ── HERO ── */
   .hero { position:relative; overflow:hidden; background:#06040f; padding:6.5rem 2.5rem 5.5rem; min-height:78vh; display:flex; align-items:center; }
   .hero-mesh { position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse 80% 80% at 60% -20%,rgba(91,54,242,0.28) 0%,transparent 55%),radial-gradient(ellipse 60% 70% at 2% 95%,rgba(0,201,167,0.12) 0%,transparent 50%),radial-gradient(ellipse 45% 45% at 98% 55%,rgba(242,75,110,0.09) 0%,transparent 50%); }
@@ -314,7 +348,6 @@ const css = `
     transition:all 0.42s cubic-bezier(.22,1,.36,1);
     animation:cardFlip3D 0.75s cubic-bezier(.22,1,.36,1) both;
   }
-  /* Top colour bar — draws in on hover */
   .job-card::before {
     content:''; position:absolute; top:0; left:0; right:0; height:3px;
     background:linear-gradient(90deg,var(--violet),var(--teal));
@@ -324,13 +357,11 @@ const css = `
   .job-card:hover { border-color:var(--border2); transform:translateY(-10px) scale(1.016); box-shadow:0 28px 60px rgba(91,54,242,0.15); }
   .job-card:hover::before { transform:scaleX(1); }
 
-  /* ── PREMIUM FEATURED CARD ── */
   .job-card.premium-card {
     background:radial-gradient(circle at top right,rgba(91,54,242,0.14),transparent 40%),linear-gradient(180deg,#ffffff 0%,#faf9ff 100%);
     border-color:rgba(91,54,242,0.22);
     animation:cardFlip3D 0.75s cubic-bezier(.22,1,.36,1) both, featuredGlow 4.5s 1s ease-in-out infinite;
   }
-  /* Shimmer sweep on hover */
   .job-card.premium-card::after {
     content:''; position:absolute; top:-40%; left:-20%; width:45%; height:190%;
     background:linear-gradient(90deg,transparent,rgba(255,255,255,0.88),transparent);
@@ -343,7 +374,6 @@ const css = `
   .premium-orb.one { width:82px; height:82px; top:-22px; right:-18px; background:radial-gradient(circle,rgba(91,54,242,0.2),transparent 70%); animation:premiumHalo 3.8s ease-in-out infinite; }
   .premium-orb.two { width:70px; height:70px; bottom:-18px; left:-12px; background:radial-gradient(circle,rgba(0,201,167,0.16),transparent 72%); animation:premiumHalo 4.6s ease-in-out infinite reverse; }
 
-  /* Animated kicker badge */
   .premium-kicker {
     display:inline-flex; align-items:center; gap:8px;
     padding:5px 12px; border-radius:100px;
@@ -356,8 +386,6 @@ const css = `
 
   .jc-top { display:flex; justify-content:space-between; margin-bottom:1rem; }
   .jc-logo-wrap { display:flex; align-items:flex-start; gap:0.9rem; }
-
-  /* Logo pops in */
   .jc-logo-anim { animation:logoPopIn 0.6s 0.15s cubic-bezier(.34,1.56,.64,1) both; }
 
   .job-title-text { font-family:var(--display); font-size:1rem; font-weight:700; margin-bottom:0.22rem; letter-spacing:-0.01em; }
@@ -366,7 +394,6 @@ const css = `
   .bk-btn:hover, .bk-btn.saved { background:var(--violet-pale); border-color:var(--border2); color:var(--violet); transform:scale(1.1); }
   .bk-btn.saved { animation:heartBeat 0.8s ease; }
 
-  /* Tags slide in sequentially */
   .job-tags { display:flex; flex-wrap:wrap; gap:0.35rem; margin-bottom:1.1rem; }
   .tag { font-size:0.69rem; font-weight:600; padding:0.26rem 0.68rem; border-radius:100px; letter-spacing:0.03em; animation:tagSlideIn 0.5s cubic-bezier(.34,1.56,.64,1) both; }
   .tag:nth-child(1){animation-delay:0.18s}
@@ -379,7 +406,6 @@ const css = `
   .t-featured { background:linear-gradient(135deg,var(--violet),#8f5cf7); color:#fff; }
 
   .jc-foot { display:flex; align-items:center; justify-content:space-between; padding-top:0.9rem; border-top:1px solid var(--border); }
-  /* Salary reveals upward */
   .j-salary { font-family:var(--display); font-weight:700; font-size:0.96rem; animation:salaryReveal 0.6s 0.45s cubic-bezier(.22,1,.36,1) both; }
   .j-date { font-size:0.72rem; color:var(--muted); }
 
@@ -687,13 +713,13 @@ const css = `
 
   /* ════════════════════════════════════════
      PREMIUM PLAN CONFIRMATION MODAL
-     (Banks · UPI · Cards)
   ════════════════════════════════════════ */
   .plan-confirm-overlay {
     position:fixed; inset:0; z-index:600;
     background:rgba(4,2,14,0.75); backdrop-filter:blur(12px);
     display:flex; align-items:center; justify-content:center; padding:1rem;
     animation:overlayIn 0.35s ease both;
+    overflow-y:auto;
   }
   .plan-confirm-modal {
     background:linear-gradient(180deg,#fcfbff 0%,#f4f1ff 100%);
@@ -702,6 +728,7 @@ const css = `
     box-shadow:0 40px 100px rgba(14,8,33,0.28);
     overflow:hidden; position:relative;
     animation:planConfirmIn 0.55s cubic-bezier(.34,1.56,.64,1) both;
+    margin:auto;
   }
   .plan-confirm-modal::before {
     content:''; position:absolute; inset:0;
@@ -713,9 +740,7 @@ const css = `
     position:relative; z-index:1;
     display:grid; grid-template-columns:1.1fr 0.9fr;
   }
-  @media(max-width:820px){ .pcm-grid{grid-template-columns:1fr} }
 
-  /* Left dark panel */
   .pcm-left {
     background:linear-gradient(160deg,#060411 0%,#130e28 55%,#1d1640 100%);
     padding:2.2rem 2rem; position:relative; overflow:hidden; color:#fff;
@@ -761,7 +786,6 @@ const css = `
     animation:confirmStagger 0.5s 0.42s cubic-bezier(.22,1,.36,1) both;
   }
 
-  /* Right form panel */
   .pcm-right { padding:2.2rem 2rem; background:#fff; }
   .pcm-right-title {
     font-family:var(--serif); font-size:1.2rem; font-weight:400;
@@ -773,7 +797,6 @@ const css = `
     animation:confirmStagger 0.5s 0.28s cubic-bezier(.22,1,.36,1) both;
   }
 
-  /* Payment method tabs */
   .pay-method-tabs {
     display:flex; gap:0; background:var(--paper);
     border:1px solid var(--border); border-radius:14px;
@@ -793,7 +816,6 @@ const css = `
   }
   .pay-method-tab-icon { font-size:14px; }
 
-  /* Bank transfer panel */
   .bank-panel { animation:bankCardSlide 0.45s cubic-bezier(.22,1,.36,1) both; }
   .bank-list { display:flex; flex-direction:column; gap:0.6rem; margin-bottom:1.2rem; }
   .bank-item {
@@ -815,7 +837,6 @@ const css = `
   .bank-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.25s; }
   .bank-item.selected .bank-check { background:var(--violet); border-color:var(--violet); color:#fff; font-size:11px; }
 
-  /* UPI panel */
   .upi-panel { animation:confirmStagger 0.4s cubic-bezier(.22,1,.36,1) both; }
   .upi-logo-row { display:flex; gap:0.65rem; margin-bottom:1.2rem; flex-wrap:wrap; }
   .upi-app {
@@ -841,7 +862,6 @@ const css = `
   .upi-verify-btn { width:100%; background:linear-gradient(135deg,#4752c4,#7289da); color:#fff; border:none; padding:0.78rem; border-radius:12px; font-family:var(--sans); font-size:0.85rem; font-weight:700; cursor:pointer; transition:all 0.3s cubic-bezier(.34,1.56,.64,1); box-shadow:0 4px 16px rgba(71,82,196,0.35); }
   .upi-verify-btn:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(71,82,196,0.45); }
 
-  /* Card panel */
   .card-panel { animation:confirmStagger 0.4s cubic-bezier(.22,1,.36,1) both; }
   .card-visual {
     background:linear-gradient(135deg,#5b36f2,#9b7ff7,#00c9a7);
@@ -870,7 +890,6 @@ const css = `
   .pay-field input,.pay-field select { border:1.5px solid var(--border); background:var(--paper); border-radius:12px; padding:0.78rem 0.95rem; font-family:var(--sans); font-size:0.88rem; outline:none; transition:border-color 0.25s,box-shadow 0.25s,transform 0.25s; color:var(--ink); }
   .pay-field input:focus,.pay-field select:focus { border-color:var(--violet); box-shadow:0 0 0 3px rgba(91,54,242,0.1); transform:translateY(-1px); }
 
-  /* Action buttons */
   .pcm-actions { display:flex; gap:0.75rem; margin-top:1.2rem; }
   .pcm-btn-cancel { flex:1; border:1.5px solid var(--border); background:#fff; color:var(--ink); border-radius:14px; padding:0.88rem 1rem; font-family:var(--sans); font-size:0.86rem; font-weight:700; cursor:pointer; transition:all 0.25s; }
   .pcm-btn-cancel:hover { border-color:var(--border2); color:var(--muted); }
@@ -887,7 +906,6 @@ const css = `
   .pcm-btn-pay:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 14px 40px rgba(91,54,242,0.48); }
   .pcm-btn-pay:hover::before { opacity:1; }
 
-  /* ── SUCCESS SCREEN ── */
   .pcm-success {
     position:relative; z-index:1; text-align:center;
     padding:3rem 2.5rem 2.5rem; min-height:500px;
@@ -935,7 +953,6 @@ const css = `
   .pcm-success-btn { background:linear-gradient(135deg,var(--violet),var(--violet-light)); color:#fff; border:none; padding:0.9rem 2.5rem; border-radius:100px; font-family:var(--sans); font-size:0.88rem; font-weight:700; cursor:pointer; box-shadow:0 8px 28px rgba(91,54,242,0.35); transition:all 0.3s cubic-bezier(.34,1.56,.64,1); animation:confirmStagger 0.5s 0.85s cubic-bezier(.22,1,.36,1) both; }
   .pcm-success-btn:hover { transform:translateY(-2px) scale(1.04); box-shadow:0 14px 40px rgba(91,54,242,0.48); }
 
-  /* Confetti pieces */
   .pcm-confetti { position:absolute; pointer-events:none; border-radius:3px; }
 
   /* ── FOOTER ── */
@@ -952,6 +969,201 @@ const css = `
   .footer-socials { display:flex; gap:0.65rem; }
   .fsoc { width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-size:13px; cursor:pointer; transition:all 0.3s cubic-bezier(.34,1.56,.64,1); text-decoration:none; color:rgba(255,255,255,0.4); }
   .fsoc:hover { background:rgba(91,54,242,0.25); border-color:rgba(91,54,242,0.4); transform:translateY(-3px); color:#fff; }
+
+  /* ══════════════════════════════════════════
+     RESPONSIVE MEDIA QUERIES
+  ══════════════════════════════════════════ */
+
+  /* ── 1200px: Large screens tightening ── */
+  @media (max-width: 1200px) {
+    .plans-grid { grid-template-columns: repeat(2, 1fr); }
+    .detail-wrap { padding: 2rem 1.5rem; }
+    .listings-wrap { padding: 2rem 1.5rem; }
+    .section { padding: 4rem 1.5rem; }
+  }
+
+  /* ── 1024px: Tablets landscape ── */
+  @media (max-width: 1024px) {
+    .nav-search-wrap { display: none; }
+    .nav-center { gap: 0; }
+    .nav-item { padding: 0.42rem 0.7rem; font-size: 0.78rem; }
+    .nav-plans-btn { display: none; }
+
+    .hero { padding: 5rem 2rem 4rem; min-height: 70vh; }
+    .hero h1 { font-size: clamp(2.4rem, 5vw, 4rem); }
+
+    .detail-wrap { flex-direction: column; }
+    .detail-side { width: 100%; }
+    .sticky-card { position: static; }
+
+    .co-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .jobs-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+    .pcm-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ── 860px: Small tablets ── */
+  @media (max-width: 860px) {
+    /* Navbar: hide center links, show hamburger */
+    .nav-center { display: none; }
+    .nav-cta { display: none; }
+    .nav-mobile-toggle { display: flex; align-items: center; justify-content: center; }
+
+    .hero { padding: 4.5rem 1.5rem 3.5rem; }
+    .hero-sub { font-size: 0.95rem; }
+    .search-glass { flex-wrap: wrap; border-radius: 18px; padding: 8px; gap: 4px; }
+    .search-divider { display: none; }
+    .search-glass select { min-width: unset; flex: 1; font-size: 0.8rem; }
+    .search-glass input { min-width: 0; }
+    .search-btn { width: 100%; border-radius: var(--r-md); padding: 0.7rem; margin-top: 4px; }
+    .hero-stats { gap: 2rem; flex-wrap: wrap; }
+
+    .listings-wrap { flex-direction: column; gap: 1rem; padding: 1.5rem; }
+    .sidebar { width: 100%; position: static; }
+
+    .pcm-grid { grid-template-columns: 1fr; }
+    .pcm-left { border-radius: 0; }
+    .pcm-right { border-radius: 0; }
+
+    .social-grid { grid-template-columns: 1fr; }
+
+    .plans-grid { grid-template-columns: 1fr 1fr; }
+
+    .compare-table th, .compare-table td { padding: 0.65rem 0.85rem; font-size: 0.77rem; }
+
+    .enterprise-strip { flex-direction: column; text-align: center; }
+    .enterprise-strip p { max-width: 100%; }
+  }
+
+  /* ── 640px: Mobile landscape / large phones ── */
+  @media (max-width: 640px) {
+    :root { --r-xl: 22px; }
+
+    .nav { padding: 0 1rem; height: 60px; }
+    .nav-mobile-menu { top: 60px; }
+    .logo-name { font-size: 1rem; }
+
+    .hero { padding: 3.5rem 1.25rem 3rem; min-height: unset; }
+    .hero-eyebrow { display: none; }
+    .hero h1 { font-size: clamp(2rem, 8vw, 3rem); margin-bottom: 1rem; }
+    .hero-sub { font-size: 0.9rem; margin-bottom: 1.8rem; max-width: 100%; }
+    .hero-stats { gap: 1.5rem; margin-top: 2rem; }
+    .hstat-num { font-size: 1.7rem; }
+
+    .section { padding: 3rem 1.25rem; }
+    .sec-title { font-size: 1.6rem; }
+    .sec-head { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+
+    .cat-grid { grid-template-columns: repeat(4, 1fr); gap: 0.6rem; }
+    .cat-card { padding: 1rem 0.5rem; }
+    .cat-icon { font-size: 1.35rem; margin-bottom: 0.4rem; }
+    .cat-label { font-size: 0.7rem; }
+    .cat-count { font-size: 0.62rem; }
+
+    .jobs-grid { grid-template-columns: 1fr; }
+    .co-grid { grid-template-columns: 1fr; }
+
+    .job-card { padding: 1.2rem; }
+    .job-title-text { font-size: 0.92rem; }
+
+    .list-card { flex-wrap: wrap; gap: 0.75rem; padding: 1rem; }
+    .list-right { width: 100%; text-align: left; display: flex; gap: 1rem; align-items: center; }
+    .bk-btn { margin-left: auto; }
+
+    .detail-wrap { padding: 1rem 1.25rem; gap: 1rem; }
+    .detail-hdr { padding: 1.35rem; }
+    .d-h1 { font-size: 1.5rem; }
+    .dsec { padding: 1.25rem; }
+
+    .resume-wrap { padding: 2rem 1.25rem; }
+    .pg-h2 { font-size: 1.8rem; }
+    .fgrid { grid-template-columns: 1fr; }
+    .fcol2 { grid-column: 1; }
+
+    .contact-wrap { padding: 2rem 1.25rem; }
+    .contact-box { padding: 1.35rem; }
+    .fgrid { grid-template-columns: 1fr; }
+
+    .breadcrumb { padding: 0.75rem 1.25rem; }
+
+    .plans-wrap { padding: 2.5rem 1.25rem; }
+    .plans-grid { grid-template-columns: 1fr; }
+    .plan-card { padding: 1.5rem; }
+    .plan-amount { font-size: 2.4rem; }
+
+    .compare-table { font-size: 0.72rem; }
+    .compare-table th, .compare-table td { padding: 0.5rem 0.6rem; }
+
+    .modal { padding: 1.75rem 1.25rem; }
+    .modal-title { font-size: 1.4rem; }
+
+    .plan-confirm-modal { border-radius: 16px; }
+    .pcm-left { padding: 1.5rem 1.25rem; }
+    .pcm-right { padding: 1.5rem 1.25rem; }
+    .pcm-title { font-size: 1.6rem; }
+    .pcm-success { padding: 2rem 1.25rem; }
+    .pcm-success-title { font-size: 1.7rem; }
+    .pcm-success-stats { grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; }
+    .pcm-stat strong { font-size: 1rem; }
+    .pcm-stat span { font-size: 0.6rem; }
+
+    .social-wrap { padding: 2.5rem 1.25rem; }
+    .social-ads-banner { padding: 1.25rem; }
+    .ads-grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .nl-form { flex-direction: column; }
+    .nl-btn { width: 100%; text-align: center; border-radius: var(--r-md); }
+    .community-strip { gap: 0.5rem; }
+    .comm-item { min-width: calc(50% - 0.25rem); }
+
+    .footer { padding: 2rem 1.25rem 1.5rem; }
+    .footer-top { gap: 1.5rem; }
+    .footer-links { min-width: calc(50% - 0.75rem); }
+
+    .toast { bottom: 1rem; right: 1rem; left: 1rem; max-width: unset; }
+
+    .notif-dropdown { width: calc(100vw - 2rem); right: -0.5rem; }
+
+    .cdwrap { padding: 1.5rem 1.25rem; }
+  }
+
+  /* ── 420px: Small phones ── */
+  @media (max-width: 420px) {
+    .nav { padding: 0 0.75rem; gap: 0.5rem; }
+    .logo-name { display: none; }
+    .saved-pill span:not(.saved-count) { display: none; }
+    .saved-pill { padding: 5px 8px; }
+
+    .hero { padding: 3rem 1rem 2.5rem; }
+    .hero h1 { font-size: 1.9rem; }
+    .hero-stats { flex-direction: column; gap: 1rem; padding-top: 1.25rem; }
+
+    .section { padding: 2.5rem 1rem; }
+    .cat-grid { grid-template-columns: repeat(4, 1fr); gap: 0.45rem; }
+    .cat-card { padding: 0.75rem 0.3rem; }
+    .cat-icon { font-size: 1.15rem; }
+    .cat-label { font-size: 0.62rem; }
+
+    .plans-grid { grid-template-columns: 1fr; }
+
+    .pcm-actions { flex-direction: column; }
+    .pcm-btn-cancel, .pcm-btn-pay { flex: none; width: 100%; }
+
+    .pay-form-grid { grid-template-columns: 1fr; }
+    .pay-field.full { grid-column: 1; }
+
+    .ads-grid { grid-template-columns: 1fr 1fr; }
+
+    .detail-wrap { padding: 1rem; }
+    .resume-wrap { padding: 1.75rem 1rem; }
+    .plans-wrap { padding: 2rem 1rem; }
+    .contact-wrap { padding: 1.75rem 1rem; }
+    .social-wrap { padding: 2rem 1rem; }
+    .cdwrap { padding: 1rem; }
+    .listings-wrap { padding: 1rem; }
+
+    .faq-q { font-size: 0.82rem; padding: 0.9rem 1rem; }
+    .compare-table th:nth-child(3), .compare-table td:nth-child(3) { display: none; }
+  }
 `;
 
 // ─── DATA ───────────────────────────────────────────────────────────────
@@ -1112,7 +1324,7 @@ function ResumeModal({fileName,onClose}){
 }
 
 // ═══════════════════════════════════════════════════════════
-// PREMIUM PLAN CONFIRMATION MODAL — Bank · UPI · Card
+// PREMIUM PLAN CONFIRMATION MODAL
 // ═══════════════════════════════════════════════════════════
 const BANKS = [
   { name:"HDFC Bank",   type:"Net Banking / UPI", color:"#c13b2f", bg:"#fde8e7", abbr:"HD" },
@@ -1182,7 +1394,6 @@ function PlanConfirmModal({ plan, billing, price, onClose, onSuccess }) {
           </div>
         ) : (
           <div className="pcm-grid">
-            {/* Left dark panel */}
             <div className="pcm-left">
               <div className="pcm-badge">✦ Secure Checkout</div>
               <div className="pcm-title">Upgrade to<br/><em style={{fontStyle:"italic",color:"var(--violet-light)"}}>{plan.name}</em></div>
@@ -1196,12 +1407,10 @@ function PlanConfirmModal({ plan, billing, price, onClose, onSuccess }) {
               <div className="pcm-secure-note">🔒 256-bit SSL · PCI-DSS compliant · Instant activation</div>
             </div>
 
-            {/* Right form panel */}
             <div className="pcm-right">
               <div className="pcm-right-title">Complete Payment</div>
               <div className="pcm-right-sub">Choose your preferred payment method</div>
 
-              {/* Method tabs */}
               <div className="pay-method-tabs">
                 {[
                   {key:"card",  icon:"💳", label:"Card"},
@@ -1214,7 +1423,6 @@ function PlanConfirmModal({ plan, billing, price, onClose, onSuccess }) {
                 ))}
               </div>
 
-              {/* Card panel */}
               {tab==="card"&&(
                 <div className="card-panel">
                   <div className="card-visual">
@@ -1234,7 +1442,6 @@ function PlanConfirmModal({ plan, billing, price, onClose, onSuccess }) {
                 </div>
               )}
 
-              {/* UPI panel */}
               {tab==="upi"&&(
                 <div className="upi-panel">
                   <div className="upi-logo-row">
@@ -1254,7 +1461,6 @@ function PlanConfirmModal({ plan, billing, price, onClose, onSuccess }) {
                 </div>
               )}
 
-              {/* Net Banking panel */}
               {tab==="bank"&&(
                 <div className="bank-panel">
                   <div className="bank-list">
@@ -1364,6 +1570,7 @@ function ListingsPage({onJobClick,savedJobs,onSave}){
   const [types,setTypes]=useState([]);
   const [levels,setLevels]=useState([]);
   const [remoteOnly,setRemoteOnly]=useState(false);
+  const [filtersOpen,setFiltersOpen]=useState(false);
   const toggleArr=(arr,setArr,val)=>setArr(arr.includes(val)?arr.filter(x=>x!==val):[...arr,val]);
   const filtered=JOBS.filter(j=>{
     if(j.salaryNum>salary)return false;
@@ -1375,7 +1582,12 @@ function ListingsPage({onJobClick,savedJobs,onSave}){
   return (
     <div className="listings-wrap">
       <aside className="sidebar">
-        <div className="sf-title">Refine Results</div>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div className="sf-title">Refine Results</div>
+          <button style={{display:"none"}} className="filter-toggle" onClick={()=>setFiltersOpen(v=>!v)}>
+            {filtersOpen?"Hide ▲":"Show ▼"}
+          </button>
+        </div>
         <div className="fg"><label>Salary (up to)</label><input type="range" min="50" max="200" value={salary} step="1" onChange={e=>setSalary(+e.target.value)}/><div className="range-val">${salary}k / year</div></div>
         <div className="fg"><label>Job Type</label>{["Full-time","Part-time","Contract","Internship"].map(t=><div key={t} className="fopt"><input type="checkbox" checked={types.includes(t)} onChange={()=>toggleArr(types,setTypes,t)}/><span>{t}</span></div>)}</div>
         <div className="fg"><label>Experience</label>{["Junior","Mid","Senior","Lead"].map(l=><div key={l} className="fopt"><input type="checkbox" checked={levels.includes(l)} onChange={()=>toggleArr(levels,setLevels,l)}/><span>{l}</span></div>)}</div>
@@ -1417,6 +1629,10 @@ function JobDetailPage({job,savedJobs,onSave,onApply,onCompanyClick}){
           </div>
           <div className="job-tags">{job.featured&&<Badge variant="featured">⭐ Featured</Badge>}<Badge variant="type">{job.type}</Badge>{job.remote&&<Badge variant="remote">Remote</Badge>}<Badge variant="level">{job.level}</Badge></div>
           <div className="d-facts"><div className="fact">📍 {job.location}</div><div className="fact">🕐 {job.type}</div><div className="fact">📅 Posted {job.date}</div><div className="fact">🎯 {job.level}</div></div>
+        </div>
+        {/* Mobile sticky apply bar */}
+        <div style={{display:"none"}} className="mobile-apply-bar">
+          <button className="apply-btn" style={{borderRadius:"var(--r-md)"}} onClick={onApply}>Apply Now →</button>
         </div>
         <div className="dsec fade-in-1"><h3>About the Role</h3><p>{job.description}</p><p>You'll collaborate closely with engineering, product, and leadership. High-impact, high-autonomy — for someone who cares deeply about craft.</p></div>
         <div className="dsec fade-in-2"><h3>Requirements</h3><ul className="req-list">{job.requirements.map((r,i)=><li key={i}>{r}</li>)}</ul></div>
@@ -1470,7 +1686,7 @@ function CompanyDetailPage({company,jobs,onJobClick}){
   return (
     <div className="cdwrap fade-in">
       <div className="dsec" style={{marginBottom:"1.1rem"}}>
-        <div style={{display:"flex",alignItems:"center",gap:"1.3rem",marginBottom:"1.5rem"}}>
+        <div style={{display:"flex",alignItems:"center",gap:"1.3rem",marginBottom:"1.5rem",flexWrap:"wrap"}}>
           <CoLogo companyId={company.id} fallback={company.logo} color={company.color} bg={company.bg} size={72} radius={18}/>
           <div><div style={{fontFamily:"var(--serif)",fontSize:"1.9rem",fontWeight:400}}>{company.name}</div><div style={{color:"var(--muted)",fontSize:"0.88rem"}}>{company.industry} · Founded {company.founded} · {company.hq}</div></div>
         </div>
@@ -1807,7 +2023,6 @@ function PlansPage({onToast}){
         <button className="enterprise-btn" onClick={()=>onToast("📞 Our enterprise team will reach out within 24h!")}>Talk to Sales →</button>
       </div>
 
-      {/* ── PREMIUM CONFIRMATION MODAL ── */}
       {confirmPlan&&(
         <PlanConfirmModal
           plan={confirmPlan}
@@ -1834,6 +2049,7 @@ export default function App(){
   const [resumeModal,setResumeModal]=useState(null);
   const [scrolled,setScrolled]=useState(false);
   const [notifOpen,setNotifOpen]=useState(false);
+  const [mobileMenuOpen,setMobileMenuOpen]=useState(false);
   const toastRef=useRef();
   const notifRef=useRef();
 
@@ -1849,6 +2065,9 @@ export default function App(){
     return ()=>document.removeEventListener("mousedown",handler);
   },[]);
 
+  // Close mobile menu on page change
+  useEffect(()=>{ setMobileMenuOpen(false); },[page]);
+
   const showToast=(msg,icon="✓")=>{
     if(toastRef.current)clearTimeout(toastRef.current);
     setToast({msg,icon});
@@ -1863,7 +2082,7 @@ export default function App(){
 
   const goToJob=(job)=>{setSelJob(job);setSelCo(null);setPage("detail");window.scrollTo({top:0,behavior:"smooth"});};
   const goToCo=(co)=>{setSelCo(co);setSelJob(null);setPage("company");window.scrollTo({top:0,behavior:"smooth"});};
-  const nav=(p)=>{setPage(p);setSelJob(null);setSelCo(null);setNotifOpen(false);window.scrollTo({top:0,behavior:"smooth"});};
+  const nav=(p)=>{setPage(p);setSelJob(null);setSelCo(null);setNotifOpen(false);setMobileMenuOpen(false);window.scrollTo({top:0,behavior:"smooth"});};
 
   const navItems=[{key:"home",label:"Home"},{key:"listings",label:"Jobs"},{key:"companies",label:"Companies"},{key:"social",label:"Community"},{key:"contact",label:"Contact"}];
   const isListActive=page==="listings"||page==="detail";
@@ -1907,11 +2126,29 @@ export default function App(){
                 </div>
               )}
             </div>
-            <div className="saved-pill" onClick={()=>nav("saved")}><div className="saved-count">{savedJobs.length}</div>Saved</div>
+            <div className="saved-pill" onClick={()=>nav("saved")}><div className="saved-count">{savedJobs.length}</div><span>Saved</span></div>
             <button className="nav-plans-btn" onClick={()=>nav("plans")}>⭐ Plans</button>
             <button className="nav-cta" onClick={()=>nav("resume")}>Upload Resume</button>
+            <button className="nav-mobile-toggle" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Menu">
+              {mobileMenuOpen ? "✕" : "☰"}
+            </button>
           </div>
         </nav>
+
+        {/* Mobile menu */}
+        <div className={`nav-mobile-menu${mobileMenuOpen?" open":""}`}>
+          {navItems.map(item=>(
+            <button key={item.key} className={`nav-mobile-item${(item.key==="listings"?isListActive:page===item.key)?" active":""}`} onClick={()=>nav(item.key)}>
+              {item.label}
+            </button>
+          ))}
+          <button className="nav-mobile-item" onClick={()=>nav("saved")}>Saved Jobs ({savedJobs.length})</button>
+          <div className="nav-mobile-divider"/>
+          <div className="nav-mobile-actions">
+            <button className="nav-mobile-plans" onClick={()=>nav("plans")}>⭐ View Plans</button>
+            <button className="nav-mobile-cta" onClick={()=>nav("resume")}>Upload Resume</button>
+          </div>
+        </div>
 
         <div className="page-wrap">
           {(page==="detail"||page==="company")&&(
