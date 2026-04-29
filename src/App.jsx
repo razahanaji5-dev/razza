@@ -212,7 +212,7 @@ const css = `
   .nav-item:hover::before { width:60%; }
   .nav-item.active { color:#fff; }
   .nav-item.active::before { width:60%; background:linear-gradient(90deg,var(--violet),var(--teal)); }
-  .nav-right { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .nav-right { display:flex; align-items:center; gap:8px; flex-shrink:0; min-width:0; margin-left:auto; }
   .nav-bell { position:relative; width:34px; height:34px; border-radius:9px; flex-shrink:0; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.09); display:flex; align-items:center; justify-content:center; cursor:pointer; color:rgba(255,255,255,0.4); font-size:15px; transition:all 0.3s cubic-bezier(.34,1.56,.64,1); }
   .nav-bell:hover { background:rgba(91,54,242,0.2); border-color:rgba(91,54,242,0.45); color:#fff; transform:scale(1.05); animation:bellShake 0.5s ease; }
   .bell-badge { position:absolute; top:5px; right:5px; width:8px; height:8px; border-radius:50%; background:var(--rose); border:1.5px solid rgba(4,2,12,0.92); animation:dotPulse 2s ease-in-out infinite; }
@@ -559,7 +559,7 @@ const css = `
   .cdwrap { max-width:1000px; margin:0 auto; padding:2rem 2.5rem; }
 
   /* ── BREADCRUMB ── */
-  .breadcrumb { font-size:0.78rem; color:var(--muted); padding:1rem 2.5rem; max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:0.45rem; animation:fadeIn 0.4s ease both; }
+  .breadcrumb { font-size:0.78rem; color:var(--muted); padding:1rem 2.5rem; max-width:1200px; margin:0 auto; display:flex; align-items:center; gap:0.45rem; animation:fadeIn 0.4s ease both; flex-wrap:wrap; }
   .bc-btn { background:none; border:none; color:var(--muted); cursor:pointer; font-family:var(--sans); font-size:0.78rem; transition:all 0.2s; padding:2px 4px; border-radius:4px; }
   .bc-btn:hover { color:var(--violet); background:var(--violet-pale); }
 
@@ -1008,6 +1008,8 @@ const css = `
     .nav-center { display: none; }
     .nav-cta { display: none; }
     .nav-mobile-toggle { display: flex; align-items: center; justify-content: center; }
+    .nav-right { gap: 0.55rem; }
+    .saved-pill { padding-right: 0.8rem; }
 
     .hero { padding: 4.5rem 1.5rem 3.5rem; }
     .hero-sub { font-size: 0.95rem; }
@@ -1042,6 +1044,9 @@ const css = `
     .nav { padding: 0 1rem; height: 60px; }
     .nav-mobile-menu { top: 60px; }
     .logo-name { font-size: 1rem; }
+    .nav-right { gap: 0.45rem; }
+    .nav-bell { width: 32px; height: 32px; }
+    .saved-pill { padding: 5px 10px 5px 7px; }
 
     .hero { padding: 3.5rem 1.25rem 3rem; min-height: unset; }
     .hero-eyebrow { display: none; }
@@ -1069,6 +1074,8 @@ const css = `
     .list-card { flex-wrap: wrap; gap: 0.75rem; padding: 1rem; }
     .list-right { width: 100%; text-align: left; display: flex; gap: 1rem; align-items: center; }
     .bk-btn { margin-left: auto; }
+    .list-header { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+    .sort-sel { width: 100%; }
 
     .detail-wrap { padding: 1rem 1.25rem; gap: 1rem; }
     .detail-hdr { padding: 1.35rem; }
@@ -1087,6 +1094,8 @@ const css = `
     .breadcrumb { padding: 0.75rem 1.25rem; }
 
     .plans-wrap { padding: 2.5rem 1.25rem; }
+    .billing-toggle { width: 100%; max-width: 340px; justify-content: space-between; }
+    .billing-opt { flex: 1; }
     .plans-grid { grid-template-columns: 1fr; }
     .plan-card { padding: 1.5rem; }
     .plan-amount { font-size: 2.4rem; }
@@ -1096,6 +1105,7 @@ const css = `
 
     .modal { padding: 1.75rem 1.25rem; }
     .modal-title { font-size: 1.4rem; }
+    .modal-detail-row { flex-wrap: wrap; align-items: flex-start; gap: 0.3rem 0.75rem; }
 
     .plan-confirm-modal { border-radius: 16px; }
     .pcm-left { padding: 1.5rem 1.25rem; }
@@ -1117,6 +1127,7 @@ const css = `
 
     .footer { padding: 2rem 1.25rem 1.5rem; }
     .footer-top { gap: 1.5rem; }
+    .footer-brand { width: 100%; }
     .footer-links { min-width: calc(50% - 0.75rem); }
 
     .toast { bottom: 1rem; right: 1rem; left: 1rem; max-width: unset; }
@@ -1130,6 +1141,7 @@ const css = `
   @media (max-width: 420px) {
     .nav { padding: 0 0.75rem; gap: 0.5rem; }
     .logo-name { display: none; }
+    .nav-bell { display: none; }
     .saved-pill span:not(.saved-count) { display: none; }
     .saved-pill { padding: 5px 8px; }
 
@@ -1144,6 +1156,8 @@ const css = `
     .cat-label { font-size: 0.62rem; }
 
     .plans-grid { grid-template-columns: 1fr; }
+    .billing-opt { padding: 0.55rem 0.7rem; font-size: 0.76rem; }
+    .billing-save { display: none; }
 
     .pcm-actions { flex-direction: column; }
     .pcm-btn-cancel, .pcm-btn-pay { flex: none; width: 100%; }
@@ -1151,7 +1165,8 @@ const css = `
     .pay-form-grid { grid-template-columns: 1fr; }
     .pay-field.full { grid-column: 1; }
 
-    .ads-grid { grid-template-columns: 1fr 1fr; }
+    .ads-grid { grid-template-columns: 1fr; }
+    .comm-item { min-width: 100%; }
 
     .detail-wrap { padding: 1rem; }
     .resume-wrap { padding: 1.75rem 1rem; }
@@ -1162,6 +1177,7 @@ const css = `
     .listings-wrap { padding: 1rem; }
 
     .faq-q { font-size: 0.82rem; padding: 0.9rem 1rem; }
+    .footer-links { min-width: 100%; }
     .compare-table th:nth-child(3), .compare-table td:nth-child(3) { display: none; }
   }
 `;
@@ -2065,6 +2081,12 @@ export default function App(){
     return ()=>document.removeEventListener("mousedown",handler);
   },[]);
 
+  useEffect(()=>{
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    if(mobileMenuOpen) setNotifOpen(false);
+    return ()=>{ document.body.style.overflow = ""; };
+  },[mobileMenuOpen]);
+
   // Close mobile menu on page change
   useEffect(()=>{ setMobileMenuOpen(false); },[page]);
 
@@ -2129,7 +2151,7 @@ export default function App(){
             <div className="saved-pill" onClick={()=>nav("saved")}><div className="saved-count">{savedJobs.length}</div><span>Saved</span></div>
             <button className="nav-plans-btn" onClick={()=>nav("plans")}>⭐ Plans</button>
             <button className="nav-cta" onClick={()=>nav("resume")}>Upload Resume</button>
-            <button className="nav-mobile-toggle" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Menu">
+            <button className="nav-mobile-toggle" onClick={()=>setMobileMenuOpen(v=>!v)} aria-label="Menu" aria-expanded={mobileMenuOpen}>
               {mobileMenuOpen ? "✕" : "☰"}
             </button>
           </div>
